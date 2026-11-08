@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: 'Abyssinica SIL';
+  src: url('/fonts/AbyssinicaSIL-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  font-family: 'Plus Jakarta Sans', 'Noto Sans Ethiopic', 'Abyssinica SIL', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  
+  /* Educational Modern Design System (Exact Required Hex Palette) */
+  --theme-primary: #173B65;      /* Navy blue */
+  --theme-secondary: #0D9488;    /* Teal */
+  --theme-success: #16A34A;      /* Green / Present */
+  --theme-warning: #F59E0B;      /* Amber / Late */
+  --theme-danger: #DC5252;       /* Red / Absent */
+  --theme-bg-main: #F4F7FB;      /* Soft gray background */
+  --theme-bg-card: #FFFFFF;      /* White card background */
+  --theme-bg-elevated: #FFFFFF;
+  --theme-text-main: #172235;    /* Dark navy text */
+  --theme-text-muted: #64748B;   /* Slate gray secondary text */
+  --theme-border: #E2E8F0;       /* Light gray border */
+  --theme-accent-cyan: #0D9488;
+  --theme-accent-teal: #173B65;
+}
+
+.dark {
+  /* High-contrast dark mode tailored for educational clarity */
+  --theme-primary: #38BDF8;
+  --theme-secondary: #2DD4BF;
+  --theme-success: #22C55E;
+  --theme-warning: #FBBF24;
+  --theme-danger: #EF4444;
+  --theme-bg-main: #0B132B;
+  --theme-bg-card: #151F38;
+  --theme-bg-elevated: #1D2A4D;
+  --theme-border: #2B3A67;
+  --theme-text-main: #F8FAFC;
+  --theme-text-muted: #94A3B8;
+  --theme-accent-cyan: #2DD4BF;
+  --theme-accent-teal: #38BDF8;
+}
+
+body {
+  font-family: inherit;
+  background-color: var(--theme-bg-main);
+  color: var(--theme-text-main);
+}
+
+/* Subtle, smooth transitions when toggling themes */
+body, header, nav, main {
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mobile tap optimization */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hide scrollbars for clean horizontal filter chips */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

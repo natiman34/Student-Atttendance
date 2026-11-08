@@ -1,0 +1,8 @@
+{
+  "name": "Remix RollCall - Mobile Student Attendance",
+  "description": "Fast, simple, offline-first mobile attendance app for teachers managing classroom attendance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
