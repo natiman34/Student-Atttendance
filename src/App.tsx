@@ -415,6 +415,20 @@ function AppContent() {
 
             {/* Right Side Header Items: Date Badge, Language Toggle, Theme Toggle */}
             <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              {/* Download App for Google Chrome Button */}
+              <button
+                type="button"
+                onClick={() => setIsInstallModalOpen(true)}
+                className="px-2.5 sm:px-3 py-1.5 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-200 border cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-[#0D9488] bg-[#0D9488] hover:bg-[#0B7A70] border-[#0D9488] text-white active:scale-95 shadow-2xs font-bold text-xs"
+                title={language === 'am' ? 'አፕ አውርድ (Download App)' : 'Download App (Google Chrome)'}
+                aria-label="Download App"
+              >
+                <Download className="w-3.5 h-3.5 text-white" />
+                <span className="hidden md:inline text-[11px] font-bold">
+                  {language === 'am' ? 'አፕ አውርድ' : 'Download App'}
+                </span>
+              </button>
+
               {/* Language Switcher Button */}
               <button
                 type="button"
@@ -612,9 +626,9 @@ function AppContent() {
         isOpen={isInstallModalOpen}
         onClose={() => setIsInstallModalOpen(false)}
         appUrl={
-          typeof window !== 'undefined' && window.location.origin.startsWith('https://')
+          typeof window !== 'undefined' && window.location.origin.includes('run.app')
             ? window.location.origin
-            : 'https://ais-dev-77mkgbnlv2haaguuixrahj-722978092860.europe-west2.run.app'
+            : 'https://ais-pre-77mkgbnlv2haaguuixrahj-722978092860.europe-west2.run.app'
         }
       />
     </div>

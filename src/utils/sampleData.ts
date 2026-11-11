@@ -57,6 +57,7 @@ export function getSampleFeedingReport(date: string = getTodayDateString()): Dai
         endTime: '07:30',
       },
     ],
+    generalNotes: 'በዕለቱ ምንም ዓይነት የጎላ ክፍተት ወይም ተግዳሮት አላጋጠመም፤ የምገባ ፕሮግራሙ በሰላም ተጠናቋል።',
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };

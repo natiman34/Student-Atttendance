@@ -3,6 +3,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import type { Student, DayAttendance, AppSettings, WeekGroup } from '../types.ts';
 import { calculateDayStats, calculateStudentStats, formatDisplayDate, formatRollNumber } from './attendance.ts';
+import { ensureEthiopicFont } from './pdfFont.ts';
 
 // 1. Parse Excel / CSV files
 export async function parseExcelOrCsvFile(
@@ -139,25 +140,30 @@ export function downloadWordReport(
 }
 
 // 3. Export PDF Document using jsPDF + autoTable
-export function downloadPDFReport(
+export async function downloadPDFReport(
   title: string,
   settings: Partial<AppSettings>,
   students: Student[],
   attendanceHistory: DayAttendance[],
   filterSubtitle?: string
-): void {
+): Promise<void> {
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'pt',
     format: 'a4',
   });
 
+  const fontLoaded = await ensureEthiopicFont(doc);
+  const fontName = fontLoaded ? 'NotoSansEthiopic' : 'helvetica';
+
   // Header Title
+  doc.setFont(fontName, 'bold');
   doc.setFontSize(20);
   doc.setTextColor(4, 120, 87); // Emerald 700
   doc.text(settings.className || 'Classroom Attendance Report', 40, 50);
 
   // Subtitle metadata
+  doc.setFont(fontName, 'normal');
   doc.setFontSize(10);
   doc.setTextColor(100, 116, 139);
   const dateStr = formatDisplayDate(new Date().toISOString().slice(0, 10));
@@ -196,6 +202,7 @@ export function downloadPDFReport(
     body: body,
     theme: 'striped',
     headStyles: {
+      font: fontName,
       fillColor: [16, 185, 129], // Emerald 500
       textColor: [255, 255, 255],
       fontStyle: 'bold',
@@ -211,12 +218,14 @@ export function downloadPDFReport(
       6: { halign: 'right', fontStyle: 'bold' },
     },
     styles: {
+      font: fontName,
       fontSize: 9,
       cellPadding: 5,
     },
     didDrawPage: (data) => {
       // Footer page numbering
       const pageCount = (doc as any).internal.getNumberOfPages();
+      doc.setFont(fontName, 'normal');
       doc.setFontSize(8);
       doc.setTextColor(148, 163, 184);
       doc.text(
@@ -407,22 +416,26 @@ export function downloadMonthlyWordReport(
 }
 
 // 6. Export Monthly Student Attendance Summary as PDF Document
-export function downloadMonthlyPdfReport(
+export async function downloadMonthlyPdfReport(
   monthName: string,
   year: number,
   students: Student[],
   monthlyAttendance: DayAttendance[],
   targetRate = 75
-): void {
+): Promise<void> {
   const doc = new jsPDF();
+  const fontLoaded = await ensureEthiopicFont(doc);
+  const fontName = fontLoaded ? 'NotoSansEthiopic' : 'helvetica';
   const sessionCount = monthlyAttendance.length;
 
   // Title
+  doc.setFont(fontName, 'bold');
   doc.setFontSize(18);
   doc.setTextColor(4, 120, 87);
   doc.text(`Monthly Attendance Summary - ${monthName} ${year}`, 40, 40);
 
   // Subtitle
+  doc.setFont(fontName, 'normal');
   doc.setFontSize(10);
   doc.setTextColor(100, 116, 139);
   doc.text(
@@ -464,6 +477,7 @@ export function downloadMonthlyPdfReport(
     head: [['Roll #', 'Student Name', 'Present', 'Absent', 'Permission', 'Total Days', 'Rate']],
     body: tableData,
     headStyles: {
+      font: fontName,
       fillColor: [4, 120, 87],
       textColor: [255, 255, 255],
       fontStyle: 'bold',
@@ -479,6 +493,7 @@ export function downloadMonthlyPdfReport(
       6: { halign: 'right', fontStyle: 'bold' },
     },
     styles: {
+      font: fontName,
       fontSize: 9,
       cellPadding: 5,
     },

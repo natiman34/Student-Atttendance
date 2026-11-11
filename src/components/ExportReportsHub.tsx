@@ -459,9 +459,9 @@ export const ExportReportsHub: React.FC<ExportReportsHubProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <button
               type="button"
-              onClick={() => {
+              onClick={async () => {
                 if (!checkAndValidateExport('feeding')) return;
-                exportFeedingReportPDF(currentFeeding);
+                await exportFeedingReportPDF(currentFeeding);
                 notifyDownload(`Feeding_Report_${selectedDate}.pdf`);
               }}
               className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition"
@@ -472,9 +472,9 @@ export const ExportReportsHub: React.FC<ExportReportsHubProps> = ({
 
             <button
               type="button"
-              onClick={() => {
+              onClick={async () => {
                 if (!checkAndValidateExport('feeding')) return;
-                exportFeedingReportWord(currentFeeding);
+                await exportFeedingReportWord(currentFeeding);
                 notifyDownload(`Feeding_Report_${selectedDate}.docx`);
               }}
               className="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition"
@@ -535,9 +535,9 @@ export const ExportReportsHub: React.FC<ExportReportsHubProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <button
             type="button"
-            onClick={() => {
+            onClick={async () => {
               if (!checkAndValidateExport('attendance')) return;
-              exportDailyAttendancePDF(selectedDate, students, currentAttendance, settings);
+              await exportDailyAttendancePDF(selectedDate, students, currentAttendance, settings);
               notifyDownload(`Attendance_Report_${selectedDate}.pdf`);
             }}
             className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition"
@@ -548,9 +548,9 @@ export const ExportReportsHub: React.FC<ExportReportsHubProps> = ({
 
           <button
             type="button"
-            onClick={() => {
+            onClick={async () => {
               if (!checkAndValidateExport('attendance')) return;
-              exportDailyAttendanceWord(selectedDate, students, currentAttendance, settings);
+              await exportDailyAttendanceWord(selectedDate, students, currentAttendance, settings);
               notifyDownload(`Attendance_Report_${selectedDate}.docx`);
             }}
             className="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition"

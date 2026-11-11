@@ -1,8 +1,22 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import {
+  Document,
+  Packer,
+  Paragraph,
+  Table,
+  TableRow,
+  TableCell,
+  TextRun,
+  HeadingLevel,
+  AlignmentType,
+  WidthType,
+  ShadingType,
+} from 'docx';
 import type { Student, DayAttendance, AppSettings, DailyFeedingReport } from '../types.ts';
 import { calculateDayStats, formatDisplayDate, formatRollNumber } from './attendance.ts';
+import { ensureEthiopicFont } from './pdfFont.ts';
 
 export {
   exportCombinedReportPDF,
@@ -30,17 +44,20 @@ function triggerBlobDownload(blob: Blob, filename: string) {
 // 1. DAILY STUDENT ATTENDANCE EXPORTS
 // ==========================================
 
-export function exportDailyAttendancePDF(
+export async function exportDailyAttendancePDF(
   date: string,
   students: Student[],
   dayAttendance: DayAttendance | undefined,
   settings: Partial<AppSettings> = {}
-): void {
+): Promise<void> {
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'pt',
     format: 'a4',
   });
+
+  const fontLoaded = await ensureEthiopicFont(doc);
+  const fontName = fontLoaded ? 'AbyssinicaSIL' : 'helvetica';
 
   const records = dayAttendance?.records || {};
   const notes = dayAttendance?.notes || {};
@@ -48,11 +65,13 @@ export function exportDailyAttendancePDF(
   const stats = calculateDayStats(students, records, { treatBlankAsAbsent: true });
 
   // Header Title
-  doc.setFontSize(18);
+  doc.setFont(fontName, 'bold');
+  doc.setFontSize(16);
   doc.setTextColor(4, 120, 87); // Emerald 700
   doc.text('Student Attendance Report / የተማሪዎች አቴንዳንስ ሪፖርት', 40, 45);
 
   // Subtitle
+  doc.setFont(fontName, 'normal');
   doc.setFontSize(10);
   doc.setTextColor(100, 116, 139);
   doc.text(
@@ -68,6 +87,7 @@ export function exportDailyAttendancePDF(
   doc.setFillColor(248, 250, 252);
   doc.roundedRect(40, 78, 515, 34, 4, 4, 'FD');
 
+  doc.setFont(fontName, 'normal');
   doc.setFontSize(9);
   doc.setTextColor(15, 23, 42);
   doc.text(
@@ -108,6 +128,7 @@ export function exportDailyAttendancePDF(
     headStyles: {
       fillColor: [4, 120, 87],
       textColor: [255, 255, 255],
+      font: fontName,
       fontStyle: 'bold',
       halign: 'center',
     },
@@ -115,15 +136,17 @@ export function exportDailyAttendancePDF(
       0: { halign: 'center', cellWidth: 30 },
       1: { halign: 'center', cellWidth: 45 },
       2: { halign: 'left' },
-      3: { halign: 'center', fontStyle: 'bold' },
+      3: { halign: 'center' },
       4: { halign: 'left' },
     },
     styles: {
+      font: fontName,
       fontSize: 9,
       cellPadding: 5,
     },
     didDrawPage: (data) => {
       const pageCount = (doc as any).internal.getNumberOfPages();
+      doc.setFont(fontName, 'normal');
       doc.setFontSize(8);
       doc.setTextColor(148, 163, 184);
       doc.text(
@@ -137,98 +160,124 @@ export function exportDailyAttendancePDF(
   doc.save(`Attendance_Report_${date}.pdf`);
 }
 
-export function exportDailyAttendanceWord(
+export async function exportDailyAttendanceWord(
   date: string,
   students: Student[],
   dayAttendance: DayAttendance | undefined,
   settings: Partial<AppSettings> = {}
-): void {
+): Promise<void> {
   const records = dayAttendance?.records || {};
   const notes = dayAttendance?.notes || {};
   const stats = calculateDayStats(students, records, { treatBlankAsAbsent: true });
   const formattedDate = formatDisplayDate(date);
 
-  let rowsHtml = '';
+  const tableRows: TableRow[] = [
+    new TableRow({
+      tableHeader: true,
+      children: [
+        new TableCell({
+          width: { size: 800, type: WidthType.DXA },
+          shading: { fill: '047857', type: ShadingType.CLEAR },
+          children: [new Paragraph({ children: [new TextRun({ text: 'ተ.ቁ', bold: true, color: 'FFFFFF' })] })],
+        }),
+        new TableCell({
+          width: { size: 1400, type: WidthType.DXA },
+          shading: { fill: '047857', type: ShadingType.CLEAR },
+          children: [new Paragraph({ children: [new TextRun({ text: 'መለያ ቁጥር', bold: true, color: 'FFFFFF' })] })],
+        }),
+        new TableCell({
+          width: { size: 4000, type: WidthType.DXA },
+          shading: { fill: '047857', type: ShadingType.CLEAR },
+          children: [new Paragraph({ children: [new TextRun({ text: 'የተማሪው ሙሉ ስም', bold: true, color: 'FFFFFF' })] })],
+        }),
+        new TableCell({
+          width: { size: 2000, type: WidthType.DXA },
+          shading: { fill: '047857', type: ShadingType.CLEAR },
+          children: [new Paragraph({ children: [new TextRun({ text: 'ሁኔታ', bold: true, color: 'FFFFFF' })] })],
+        }),
+        new TableCell({
+          width: { size: 1800, type: WidthType.DXA },
+          shading: { fill: '047857', type: ShadingType.CLEAR },
+          children: [new Paragraph({ children: [new TextRun({ text: 'ማስታወሻ', bold: true, color: 'FFFFFF' })] })],
+        }),
+      ],
+    }),
+  ];
+
   students.forEach((s, idx) => {
     const rawSt = records[s.id];
     const st = (rawSt === 'present' || rawSt === 'permission' || rawSt === 'late') ? rawSt : 'absent';
     const note = notes[s.id] || '-';
-    const isAbsent = st === 'absent';
-    const isPresent = st === 'present';
-    const isPermission = st === 'permission';
-    const isLate = st === 'late';
+    const statusLabel =
+      st === 'present'
+        ? 'ተገኝቷል (Present)'
+        : st === 'absent'
+        ? 'ቀሪ (Absent)'
+        : st === 'permission'
+        ? 'ፈቃድ (Permission)'
+        : 'ዘግይቷል (Late)';
 
-    const statusBadge = isPresent
-      ? '<span style="color:#059669; font-weight:bold;">Present / ተገኝቷል</span>'
-      : isAbsent
-      ? '<span style="color:#dc2626; font-weight:bold;">Absent / ቀሪ</span>'
-      : isPermission
-      ? '<span style="color:#2563eb; font-weight:bold;">Permission / ፈቃድ</span>'
-      : '<span style="color:#d97706; font-weight:bold;">Late / ዘግይቷል</span>';
-
-    rowsHtml += `
-      <tr style="${isAbsent ? 'background-color:#fee2e2;' : ''}">
-        <td style="padding:6px 10px; border:1px solid #cbd5e1; text-align:center;">${idx + 1}</td>
-        <td style="padding:6px 10px; border:1px solid #cbd5e1; text-align:center; font-family:monospace;">${formatRollNumber(s.rollNumber)}</td>
-        <td style="padding:6px 10px; border:1px solid #cbd5e1; font-weight:600;">${s.name}</td>
-        <td style="padding:6px 10px; border:1px solid #cbd5e1; text-align:center;">${statusBadge}</td>
-        <td style="padding:6px 10px; border:1px solid #cbd5e1; color:#475569;">${note}</td>
-      </tr>
-    `;
+    tableRows.push(
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: String(idx + 1) })] })],
+          }),
+          new TableCell({
+            children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: formatRollNumber(s.rollNumber) })] })],
+          }),
+          new TableCell({
+            children: [new Paragraph({ children: [new TextRun({ text: s.name, bold: true })] })],
+          }),
+          new TableCell({
+            children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: statusLabel })] })],
+          }),
+          new TableCell({
+            children: [new Paragraph({ children: [new TextRun({ text: note })] })],
+          }),
+        ],
+      })
+    );
   });
 
-  const html = `
-    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-      <head>
-        <meta charset='utf-8'>
-        <title>Attendance Report ${date}</title>
-        <style>
-          body { font-family: 'Segoe UI', Calibri, Arial, sans-serif; margin: 30px; color: #0f172a; }
-          h1 { color: #047857; margin-bottom: 4px; font-size: 22px; }
-          .meta-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; margin: 16px 0; border-radius: 6px; }
-          .summary-pill { display: inline-block; margin-right: 18px; font-size: 13px; font-weight: bold; }
-          table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }
-          th { background-color: #047857; color: white; padding: 8px 10px; border: 1px solid #065f46; text-align: left; }
-        </style>
-      </head>
-      <body>
-        <h1>የተማሪዎች አቴንዳንስ ሪፖርት (Student Attendance Report)</h1>
-        <p style="color:#64748b; font-size:13px; margin-top:0;">
-          <strong>ክፍል (Class):</strong> ${settings.className || 'General'} | 
-          <strong>አስተማሪ (Teacher):</strong> ${settings.teacherName || 'Instructor'} | 
-          <strong>ቀን (Date):</strong> ${formattedDate} (${date})
-        </p>
-
-        <div class="meta-box">
-          <span class="summary-pill">ጠቅላላ ተማሪዎች: ${stats.totalStudents}</span>
-          <span class="summary-pill" style="color:#059669;">የተገኙ (Present): ${stats.present}</span>
-          <span class="summary-pill" style="color:#dc2626;">ቀሪዎች (Absent): ${stats.absent}</span>
-          <span class="summary-pill" style="color:#2563eb;">ፈቃድ (Permission): ${stats.permission}</span>
-          <span class="summary-pill">የመገኘት መጠን (Rate): ${stats.attendanceRate}%</span>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th style="width:40px; text-align:center;">ተ.ቁ</th>
-              <th style="width:70px; text-align:center;">መለያ / Roll #</th>
-              <th>የተማሪው ሙሉ ስም (Student Name)</th>
-              <th style="width:120px; text-align:center;">ሁኔታ (Status)</th>
-              <th style="width:180px;">ማስታወሻ (Note)</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rowsHtml}
-          </tbody>
-        </table>
-        <p style="margin-top:20px; font-size:11px; color:#94a3b8;">Generated by Student Attendance and Feeding Management App</p>
-      </body>
-    </html>
-  `;
-
-  const blob = new Blob(['\ufeff', html], {
-    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document;charset=utf-8',
+  const doc = new Document({
+    sections: [
+      {
+        properties: {},
+        children: [
+          new Paragraph({
+            text: 'የተማሪዎች አቴንዳንስ ሪፖርት (Student Attendance Report)',
+            heading: HeadingLevel.HEADING_1,
+            alignment: AlignmentType.LEFT,
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({ text: `ክፍል (Class): ${settings.className || 'General'}   |   አስተማሪ (Teacher): ${settings.teacherName || 'Instructor'}   |   ቀን (Date): ${formattedDate} (${date})\n`, italics: true, color: '64748B' }),
+              new TextRun({ text: `ጠቅላላ ተማሪዎች: ${stats.totalStudents}   |   የተገኙ: ${stats.present}   |   ቀሪዎች: ${stats.absent}   |   ፈቃድ: ${stats.permission}   |   የመገኘት መጠን: ${stats.attendanceRate}%\n`, bold: true }),
+            ],
+            spacing: { after: 200 },
+          }),
+          new Table({
+            width: { size: 10000, type: WidthType.DXA },
+            rows: tableRows,
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: 'Generated by RollCall Student Attendance and Feeding Management App',
+                italics: true,
+                color: '94A3B8',
+                size: 16,
+              }),
+            ],
+            spacing: { before: 300 },
+          }),
+        ],
+      },
+    ],
   });
+
+  const blob = await Packer.toBlob(doc);
   triggerBlobDownload(blob, `Attendance_Report_${date}.docx`);
 }
 
@@ -285,30 +334,15 @@ export function exportDailyAttendanceExcel(
 // 2. DAILY FEEDING REPORT EXPORTS
 // ==========================================
 
-export function exportFeedingReportPDF(report: DailyFeedingReport): void {
+export async function exportFeedingReportPDF(report: DailyFeedingReport): Promise<void> {
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'pt',
     format: 'a4',
   });
 
-  // Title
-  doc.setFontSize(18);
-  doc.setTextColor(4, 120, 87);
-  doc.text('Daily Feeding Report / የዕለት ምገባ ሪፖርት', 40, 45);
-
-  // Subtitle
-  doc.setFontSize(10);
-  doc.setTextColor(100, 116, 139);
-  doc.text(`Report Date: ${report.date}   |   Location: ${report.location}`, 40, 65);
-
-  // Metadata Card
-  doc.setDrawColor(203, 213, 225);
-  doc.setFillColor(248, 250, 252);
-  doc.roundedRect(40, 78, 515, 95, 4, 4, 'FD');
-
-  doc.setFontSize(9);
-  doc.setTextColor(15, 23, 42);
+  const fontLoaded = await ensureEthiopicFont(doc);
+  const fontName = fontLoaded ? 'AbyssinicaSIL' : 'helvetica';
 
   const actTypeLabel =
     report.activityType === 'lesson'
@@ -316,6 +350,27 @@ export function exportFeedingReportPDF(report: DailyFeedingReport): void {
       : report.activityType === 'game'
       ? 'ጨዋታ (Game)'
       : 'ምንም (Nothing)';
+
+  // Title
+  doc.setFont(fontName, 'bold');
+  doc.setFontSize(16);
+  doc.setTextColor(4, 120, 87);
+  doc.text('Daily Feeding Report / የዕለት ምገባ ሪፖርት', 40, 45);
+
+  // Subtitle
+  doc.setFont(fontName, 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(100, 116, 139);
+  doc.text(`ቀን (Date): ${report.date}   |   ቦታ (Location): ${report.location}`, 40, 65);
+
+  // Metadata Card
+  doc.setDrawColor(203, 213, 225);
+  doc.setFillColor(248, 250, 252);
+  doc.roundedRect(40, 78, 515, 95, 4, 4, 'FD');
+
+  doc.setFont(fontName, 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(15, 23, 42);
 
   doc.text(`• Coordinator / የዕለቱ ተረኛ አስተባባሪ:  ${report.coordinatorName}`, 55, 98);
   doc.text(`• Food Type / የምግቡ አይነት:  ${report.foodType}`, 55, 116);
@@ -327,19 +382,20 @@ export function exportFeedingReportPDF(report: DailyFeedingReport): void {
   );
 
   // Recreated Feeding Activity Table (Header: ተ.ቁ, ተግባር, ሰዓት -> ተጀመረ, አለቀ)
+  doc.setFont(fontName, 'bold');
   doc.setFontSize(11);
   doc.setTextColor(4, 120, 87);
   doc.text('Feeding Activity Schedule / የምገባ ተግባራት ሰሌዳ', 40, 195);
 
   const head = [
     [
-      { content: 'ተ.ቁ\n(No)', rowSpan: 2, styles: { halign: 'center' as const, valign: 'middle' as const } },
-      { content: 'ተግባር\n(Activity)', rowSpan: 2, styles: { halign: 'left' as const, valign: 'middle' as const } },
-      { content: 'ሰዓት (Time)', colSpan: 2, styles: { halign: 'center' as const } },
+      { content: 'ተ.ቁ\n(No)', rowSpan: 2, styles: { halign: 'center' as const, valign: 'middle' as const, font: fontName } },
+      { content: 'ተግባር\n(Activity)', rowSpan: 2, styles: { halign: 'left' as const, valign: 'middle' as const, font: fontName } },
+      { content: 'ሰዓት (Time)', colSpan: 2, styles: { halign: 'center' as const, font: fontName } },
     ],
     [
-      { content: 'ተጀመረ (Start)', styles: { halign: 'center' as const } },
-      { content: 'አለቀ (End)', styles: { halign: 'center' as const } },
+      { content: 'ተጀመረ (Start)', styles: { halign: 'center' as const, font: fontName } },
+      { content: 'አለቀ (End)', styles: { halign: 'center' as const, font: fontName } },
     ],
   ];
 
@@ -358,6 +414,7 @@ export function exportFeedingReportPDF(report: DailyFeedingReport): void {
     headStyles: {
       fillColor: [4, 120, 87],
       textColor: [255, 255, 255],
+      font: fontName,
       fontStyle: 'bold',
       lineColor: [30, 41, 59],
       lineWidth: 1,
@@ -369,12 +426,14 @@ export function exportFeedingReportPDF(report: DailyFeedingReport): void {
       3: { halign: 'center', cellWidth: 90 },
     },
     styles: {
+      font: fontName,
       fontSize: 9,
       cellPadding: 6,
       lineColor: [203, 213, 225],
     },
     didDrawPage: (data) => {
       const pageCount = (doc as any).internal.getNumberOfPages();
+      doc.setFont(fontName, 'normal');
       doc.setFontSize(8);
       doc.setTextColor(148, 163, 184);
       doc.text(
@@ -387,9 +446,12 @@ export function exportFeedingReportPDF(report: DailyFeedingReport): void {
 
   if (report.generalNotes) {
     const finalY = (doc as any).lastAutoTable?.finalY || 350;
+    doc.setFont(fontName, 'bold');
     doc.setFontSize(10);
     doc.setTextColor(15, 23, 42);
+    // Explicit requested Amharic heading
     doc.text('በዕለቱ የተፈጠሩ ክፍተቶች ወይም ተግዳሮቶች:', 40, finalY + 25);
+    doc.setFont(fontName, 'normal');
     doc.setFontSize(9);
     doc.setTextColor(71, 85, 105);
     doc.text(report.generalNotes, 40, finalY + 40, { maxWidth: 515 });
@@ -398,7 +460,7 @@ export function exportFeedingReportPDF(report: DailyFeedingReport): void {
   doc.save(`Feeding_Report_${report.date}.pdf`);
 }
 
-export function exportFeedingReportWord(report: DailyFeedingReport): void {
+export async function exportFeedingReportWord(report: DailyFeedingReport): Promise<void> {
   const actTypeLabel =
     report.activityType === 'lesson'
       ? 'ትምህርት (Lesson)'
@@ -406,73 +468,128 @@ export function exportFeedingReportWord(report: DailyFeedingReport): void {
       ? 'ጨዋታ (Game)'
       : 'ምንም (Nothing)';
 
-  let tableRowsHtml = '';
+  const tableRows: TableRow[] = [
+    new TableRow({
+      tableHeader: true,
+      children: [
+        new TableCell({
+          width: { size: 1000, type: WidthType.DXA },
+          shading: { fill: '047857', type: ShadingType.CLEAR },
+          children: [new Paragraph({ children: [new TextRun({ text: 'ተ.ቁ (No)', bold: true, color: 'FFFFFF' })] })],
+        }),
+        new TableCell({
+          width: { size: 4500, type: WidthType.DXA },
+          shading: { fill: '047857', type: ShadingType.CLEAR },
+          children: [new Paragraph({ children: [new TextRun({ text: 'ተግባር (Activity)', bold: true, color: 'FFFFFF' })] })],
+        }),
+        new TableCell({
+          width: { size: 2250, type: WidthType.DXA },
+          shading: { fill: '047857', type: ShadingType.CLEAR },
+          children: [new Paragraph({ children: [new TextRun({ text: 'ተጀመረ (Start Time)', bold: true, color: 'FFFFFF' })] })],
+        }),
+        new TableCell({
+          width: { size: 2250, type: WidthType.DXA },
+          shading: { fill: '047857', type: ShadingType.CLEAR },
+          children: [new Paragraph({ children: [new TextRun({ text: 'አለቀ (End Time)', bold: true, color: 'FFFFFF' })] })],
+        }),
+      ],
+    }),
+  ];
+
   (report.activities || []).forEach((row) => {
-    tableRowsHtml += `
-      <tr>
-        <td style="padding:8px; border:2px solid #334155; text-align:center; font-weight:bold; font-family:monospace;">${row.orderNumber}</td>
-        <td style="padding:8px; border:2px solid #334155; font-weight:bold;">${row.activityName}</td>
-        <td style="padding:8px; border:2px solid #334155; text-align:center; font-family:monospace; font-weight:600;">${row.startTime || '-'}</td>
-        <td style="padding:8px; border:2px solid #334155; text-align:center; font-family:monospace; font-weight:600;">${row.endTime || '-'}</td>
-      </tr>
-    `;
+    tableRows.push(
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: String(row.orderNumber), bold: true })] })],
+          }),
+          new TableCell({
+            children: [new Paragraph({ children: [new TextRun({ text: row.activityName || '-', bold: true })] })],
+          }),
+          new TableCell({
+            children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: row.startTime || '-' })] })],
+          }),
+          new TableCell({
+            children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: row.endTime || '-' })] })],
+          }),
+        ],
+      })
+    );
   });
 
-  const html = `
-    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-      <head>
-        <meta charset='utf-8'>
-        <title>Daily Feeding Report - ${report.date}</title>
-        <style>
-          body { font-family: 'Segoe UI', Calibri, Arial, sans-serif; margin: 40px; color: #0f172a; }
-          h1 { color: #047857; margin-bottom: 4px; font-size: 22px; }
-          .meta-card { background: #f8fafc; border: 1px solid #cbd5e1; padding: 16px; margin: 20px 0; border-radius: 6px; }
-          .field-row { margin-bottom: 8px; font-size: 13px; }
-          .field-label { font-weight: bold; color: #334155; display: inline-block; width: 260px; }
-          table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 13px; }
-          th { background-color: #047857; color: white; padding: 10px; border: 2px solid #334155; text-align: center; }
-        </style>
-      </head>
-      <body>
-        <h1>የዕለት ምገባ ሪፖርት (Daily Feeding Report)</h1>
-        <p style="color:#64748b; font-size:13px; margin-top:0;">ቀን (Date): ${report.date} | ማዕከል / ቦታ: ${report.location}</p>
-
-        <div class="meta-card">
-          <div class="field-row"><span class="field-label">የዕለቱ ተረኛ አስተባባሪ:</span> <strong>${report.coordinatorName}</strong></div>
-          <div class="field-row"><span class="field-label">የምግቡ አይነት:</span> <strong>${report.foodType}</strong></div>
-          <div class="field-row"><span class="field-label">ምገባው የተከናወነበት ቦታ:</span> ${report.location}</div>
-          <div class="field-row"><span class="field-label">ምገባው ላይ የተሳተፉ ህፃናት ቁጥር:</span> <strong>${report.childrenCount}</strong></div>
-          <div class="field-row"><span class="field-label">የተሳተፉ አገልጋዮች ብዛት:</span> <strong>${report.volunteersCount}</strong></div>
-          <div class="field-row"><span class="field-label">የተሰጠው ትምህርት ወይም ጨዋታ:</span> <strong>${actTypeLabel}</strong></div>
-          ${report.generalNotes ? `<div class="field-row"><span class="field-label">በዕለቱ የተፈጠሩ ክፍተቶች ወይም ተግዳሮቶች:</span> ${report.generalNotes}</div>` : ''}
-        </div>
-
-        <h3 style="color:#047857; margin-top:24px;">የምገባ ተግባራት እና የጊዜ ሰሌዳ (Activity Schedule)</h3>
-        <table>
-          <thead>
-            <tr>
-              <th rowspan="2" style="width:50px;">ተ.ቁ</th>
-              <th rowspan="2" style="text-align:left;">ተግባር</th>
-              <th colspan="2">ሰዓት</th>
-            </tr>
-            <tr>
-              <th style="width:110px;">ተጀመረ</th>
-              <th style="width:110px;">አለቀ</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${tableRowsHtml}
-          </tbody>
-        </table>
-
-        <p style="margin-top:28px; font-size:11px; color:#94a3b8;">Generated by Student Attendance and Feeding Management System</p>
-      </body>
-    </html>
-  `;
-
-  const blob = new Blob(['\ufeff', html], {
-    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document;charset=utf-8',
+  const doc = new Document({
+    sections: [
+      {
+        properties: {},
+        children: [
+          new Paragraph({
+            text: 'የዕለት ምገባ ሪፖርት (Daily Feeding Report)',
+            heading: HeadingLevel.HEADING_1,
+            alignment: AlignmentType.LEFT,
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({ text: `ቀን (Date): ${report.date}   |   ማዕከል / ቦታ: ${report.location}\n`, italics: true, color: '64748B' }),
+              new TextRun({ text: `የዕለቱ ተረኛ አስተባባሪ: `, bold: true }),
+              new TextRun({ text: `${report.coordinatorName}\n` }),
+              new TextRun({ text: `የምግቡ አይነት: `, bold: true }),
+              new TextRun({ text: `${report.foodType}\n` }),
+              new TextRun({ text: `ምገባው የተከናወነበት ቦታ: `, bold: true }),
+              new TextRun({ text: `${report.location}\n` }),
+              new TextRun({ text: `ምገባው ላይ የተሳተፉ ህፃናት ቁጥር: `, bold: true }),
+              new TextRun({ text: `${report.childrenCount}\n` }),
+              new TextRun({ text: `የተሳተፉ አገልጋዮች ብዛት: `, bold: true }),
+              new TextRun({ text: `${report.volunteersCount}\n` }),
+              new TextRun({ text: `የተሰጠው ትምህርት ወይም ጨዋታ: `, bold: true }),
+              new TextRun({ text: `${actTypeLabel}\n` }),
+            ],
+            spacing: { after: 200 },
+          }),
+          new Paragraph({
+            text: 'የምገባ ተግባራት እና የጊዜ ሰሌዳ (Activity Schedule)',
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 200, after: 120 },
+          }),
+          new Table({
+            width: { size: 10000, type: WidthType.DXA },
+            rows: tableRows,
+          }),
+          ...(report.generalNotes
+            ? [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text: 'በዕለቱ የተፈጠሩ ክፍተቶች ወይም ተግዳሮቶች: ',
+                      bold: true,
+                      size: 22,
+                    }),
+                    new TextRun({
+                      text: report.generalNotes,
+                      italics: true,
+                      size: 20,
+                    }),
+                  ],
+                  spacing: { before: 250, after: 150 },
+                }),
+              ]
+            : []),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: 'Generated by RollCall Student Attendance and Feeding Management App',
+                italics: true,
+                color: '94A3B8',
+                size: 16,
+              }),
+            ],
+            spacing: { before: 300 },
+          }),
+        ],
+      },
+    ],
   });
+
+  const blob = await Packer.toBlob(doc);
   triggerBlobDownload(blob, `Feeding_Report_${report.date}.docx`);
 }
 

@@ -38,7 +38,6 @@ import {
   Users,
   Calendar,
   ArrowUpRight,
-  Smartphone,
   ShieldCheck,
 } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext.tsx';
@@ -389,6 +388,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <span>{t.loadDemoRoster}</span>
             </button>
           )}
+
+          {onOpenInstallModal && (
+            <button
+              type="button"
+              onClick={onOpenInstallModal}
+              className="w-full py-2.5 px-4 rounded-2xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 hover:bg-teal-100 dark:hover:bg-teal-900/40 text-teal-800 dark:text-teal-200 font-bold text-xs flex items-center justify-center gap-2 transition active:scale-[0.98] cursor-pointer mt-2"
+            >
+              <Download className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+              <span>{language === 'am' ? 'አፕ አውርድ (Google Chrome)' : 'Download App (Google Chrome)'}</span>
+            </button>
+          )}
         </div>
       </div>
     );
@@ -504,49 +514,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
       </div>
 
-      {/* Standalone Android APK Direct Download Banner */}
-      <div className="bg-gradient-to-r from-emerald-600/10 via-teal-600/10 to-[#173B65]/10 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-[#1A2544]/50 border border-emerald-500/30 dark:border-emerald-600/40 rounded-3xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
-        <div className="flex items-center gap-3.5 w-full sm:w-auto">
-          <div className="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-600/30">
-            <Smartphone className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-black text-slate-900 dark:text-white">
-                {language === 'am' ? 'የአንድሮይድ አፕ (Standalone APK v1.0)' : 'Standalone Android APK (v1.0)'}
-              </h3>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300">
-                17 MB
-              </span>
-            </div>
-            <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
-              {language === 'am'
-                ? 'በቀጥታ ወደ አንድሮይድ ስልክዎ ይጫኑ። ያለ ኢንተርኔት ወይም የጎግል ፈቃድ በ100% ራሱን ችሎ ይሰራል!'
-                : 'Direct install for Android phones. Runs 100% standalone & offline with no login or browser required.'}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
-          <a
-            href="/downloads/RollCall-Release.apk"
-            download="RollCall-Release.apk"
-            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20 active:scale-95 transition cursor-pointer"
-          >
-            <Download className="w-4 h-4" />
-            <span>{language === 'am' ? 'APK አውርድ' : 'Download APK'}</span>
-          </a>
-          {onOpenInstallModal && (
-            <button
-              type="button"
-              onClick={onOpenInstallModal}
-              className="px-3.5 py-2.5 rounded-xl bg-white dark:bg-[#1D2A4D] hover:bg-slate-50 dark:hover:bg-[#151F38] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs transition cursor-pointer"
-            >
-              {language === 'am' ? 'መመሪያ' : 'Guide'}
-            </button>
-          )}
-        </div>
-      </div>
 
       {/* Responsive 2-Column Core Actions: Attendance & Feeding */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">

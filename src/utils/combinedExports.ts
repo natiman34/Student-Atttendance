@@ -275,10 +275,13 @@ export async function exportCombinedReportPDF(
     if (feeding.generalNotes) {
       const feedFinalY = (doc as any).lastAutoTable?.finalY || nextY + 180;
       doc.setFont(fontName, 'bold');
+      doc.setFontSize(9.5);
+      doc.setTextColor(15, 23, 42);
+      doc.text('በዕለቱ የተፈጠሩ ክፍተቶች ወይም ተግዳሮቶች:', 40, feedFinalY + 18);
+      doc.setFont(fontName, 'normal');
       doc.setFontSize(8.5);
       doc.setTextColor(71, 85, 105);
-      const notesLabel = isAm ? 'ያጋጠሙ ክፍተቶች ወይም ተግዳሮቶች:' : 'Gaps or Challenges:';
-      doc.text(`${notesLabel} ${feeding.generalNotes}`, 40, feedFinalY + 16, { maxWidth: 515 });
+      doc.text(feeding.generalNotes, 40, feedFinalY + 32, { maxWidth: 515 });
     }
   }
 
@@ -614,8 +617,14 @@ export async function exportCombinedReportWord(
             ? [
                 new Paragraph({
                   children: [
-                    new TextRun({ text: isAm ? 'በዕለቱ የተፈጠሩ ክፍተቶች ወይም ተግዳሮቶች: ' : 'Gaps or Challenges: ', bold: true }),
-                    new TextRun({ text: feeding.generalNotes, italics: true }),
+                    new TextRun({
+                      text: isAm
+                        ? 'በዕለቱ የተፈጠሩ ክፍተቶች ወይም ተግዳሮቶች: '
+                        : 'በዕለቱ የተፈጠሩ ክፍተቶች ወይም ተግዳሮቶች (Gaps & Challenges): ',
+                      bold: true,
+                      size: 22,
+                    }),
+                    new TextRun({ text: feeding.generalNotes, italics: true, size: 20 }),
                   ],
                   spacing: { before: 150, after: 150 },
                 }),

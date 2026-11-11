@@ -13,8 +13,6 @@ import {
   loadTermlyReports,
   loadAnnualReports,
   loadBackupHistory,
-  DEFAULT_SCHOOL_TERMS,
-  DEFAULT_ETHIOPIAN_HOLIDAYS,
 } from '../utils/storage.ts';
 import {
   downloadWordReport,
@@ -37,11 +35,9 @@ import {
   CheckCircle2,
   FolderArchive,
   Globe,
-  Calendar,
   CalendarDays,
   History,
   Info,
-  Smartphone,
 } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext.tsx';
 import { ConfirmModal } from './ConfirmModal.tsx';
@@ -503,67 +499,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         </form>
       </section>
 
-      {/* Ethiopian Academic Calendar & School Terms */}
-      <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 shadow-xs border border-slate-200/80 dark:border-slate-800 space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-[#0D9488]" />
-            <h2 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-              {t.academicCalendarTitle}
-            </h2>
-          </div>
-          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300">
-            2017 ዓ.ም
-          </span>
-        </div>
-        <p className="text-xs text-slate-600 dark:text-slate-400">
-          {t.academicCalendarDesc}
-        </p>
 
-        {/* Terms Grid */}
-        <div className="space-y-2">
-          <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200">
-            {t.schoolTerms}
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {DEFAULT_SCHOOL_TERMS.map((term) => (
-              <div
-                key={term.id}
-                className="p-3 rounded-2xl bg-[#F4F7FB] dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700"
-              >
-                <div className="text-xs font-black text-[#173B65] dark:text-[#38BDF8]">
-                  {language === 'am' ? (term.amharicName || term.name) : term.name}
-                </div>
-                <div className="text-[11px] font-mono text-slate-600 dark:text-slate-400 mt-1">
-                  {term.startDate} — {term.endDate}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Holidays List */}
-        <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-          <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200">
-            {t.ethiopianHolidays}
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-            {DEFAULT_ETHIOPIAN_HOLIDAYS.map((holiday) => (
-              <div
-                key={holiday.id}
-                className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 text-xs"
-              >
-                <div className="font-bold text-slate-900 dark:text-white truncate">
-                  {language === 'am' ? (holiday.amharicName || holiday.name) : holiday.name}
-                </div>
-                <div className="text-[10px] text-slate-500 font-mono mt-0.5">
-                  {holiday.date}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Weekly and Monthly Report Storage Settings (የሪፖርት ማስቀመጫ ቅንብሮች) */}
       <ReportStorageSettings
@@ -607,43 +543,34 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         </div>
       </section>
 
-      {/* Standalone Android Mobile Application (APK) */}
-      <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 shadow-xs border border-emerald-500/20 dark:border-emerald-600/30 space-y-4">
+      {/* Google Chrome Application Download & Installation */}
+      <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 shadow-xs border border-[#0D9488]/30 dark:border-[#0D9488]/40 space-y-4">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <h2 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-              <Smartphone className="w-4 h-4" />
-              <span>{language === 'am' ? 'የአንድሮይድ ስልክ አፕ (Standalone APK)' : 'Android Mobile Application (APK)'}</span>
+            <h2 className="text-xs font-bold text-[#0D9488] dark:text-[#2DD4BF] uppercase tracking-wider flex items-center gap-1.5">
+              <Download className="w-4 h-4" />
+              <span>{language === 'am' ? 'የጎግል ክሮም አፕ ማውረጃ (Google Chrome Download)' : 'Google Chrome App Download'}</span>
             </h2>
             <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
               {language === 'am'
-                ? 'ሮልኮልን እንደ ራሱን የቻለ የአንድሮይድ አፕ በስልክዎ ላይ ይጫኑ። ያለ ኢንተርኔት በ100% ከመስመር ውጭ ይሰራል።'
-                : 'Install RollCall as a standalone native app directly on any Android 8.0+ device. 100% offline.'}
+                ? 'አፑን በGoogle Chrome በኩል ወደ አንድሮይድ ስልክዎ ወይም ኮምፒውተርዎ ያውርዱ። ያለ ኢንተርኔት 100% በራሱ ይሰራል!'
+                : 'Download and install the application through Google Chrome for Android phones and desktop. Runs 100% offline!'}
             </p>
           </div>
-          <span className="text-[11px] font-mono font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded-full shrink-0">
-            v1.0 Release
+          <span className="text-[11px] font-mono font-bold bg-teal-100 dark:bg-teal-950 text-teal-800 dark:text-teal-300 px-2.5 py-0.5 rounded-full shrink-0">
+            Chrome PWA
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-          <a
-            href="/downloads/RollCall-Release.apk"
-            download="RollCall-Release.apk"
-            className="p-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-98 cursor-pointer"
-          >
-            <Download className="w-4 h-4" />
-            <span>{language === 'am' ? 'የተፈረመ APK አውርድ (17 MB)' : 'Download Signed APK (17 MB)'}</span>
-          </a>
-
+        <div className="pt-1">
           {onOpenInstallModal && (
             <button
               type="button"
               onClick={onOpenInstallModal}
-              className="p-3.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-100 font-bold text-xs flex items-center justify-center gap-2 transition active:scale-98 cursor-pointer"
+              className="w-full p-3.5 rounded-2xl bg-[#173B65] hover:bg-[#102a4a] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-98 cursor-pointer"
             >
-              <Info className="w-4 h-4 text-emerald-600" />
-              <span>{language === 'am' ? 'የመጫኛ መመሪያዎች እና ሌሎች ፋይሎች' : 'Installation Guide & Options'}</span>
+              <Download className="w-4 h-4 text-[#2DD4BF]" />
+              <span>{language === 'am' ? 'አፕ አውርድ (Google Chrome)' : 'Download App (Google Chrome)'}</span>
             </button>
           )}
         </div>

@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { FeedingActivityTable } from './FeedingActivityTable.tsx';
 import { EthiopianDatePicker } from './EthiopianDatePicker.tsx';
+import { useTranslation } from '../i18n/LanguageContext.tsx';
 
 interface ReportHistoryProps {
   feedingReports: DailyFeedingReport[];
@@ -53,6 +54,7 @@ export const ReportHistory: React.FC<ReportHistoryProps> = ({
   onDeleteFeedingReport,
   onNavigateToAttendance,
 }) => {
+  const { language, t } = useTranslation();
   const [activeHistoryTab, setActiveHistoryTab] = useState<'feeding' | 'attendance'>('feeding');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDateFilter, setSelectedDateFilter] = useState('');
@@ -514,9 +516,11 @@ export const ReportHistory: React.FC<ReportHistoryProps> = ({
                 </span>
               </div>
               {viewingFeedingReport.generalNotes && (
-                <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-500 block font-semibold">በዕለቱ የተፈጠሩ ክፍተቶች ወይም ተግዳሮቶች:</span>
-                  <p className="text-slate-800 dark:text-slate-200 italic mt-0.5">
+                <div className="pt-2 border-t border-slate-200 dark:border-slate-700 space-y-1">
+                  <span className="text-slate-700 dark:text-slate-300 block font-bold text-xs">
+                    {language === 'am' ? 'በዕለቱ የተፈጠሩ ክፍተቶች ወይም ተግዳሮቶች:' : 'በዕለቱ የተፈጠሩ ክፍተቶች ወይም ተግዳሮቶች (Gaps & Challenges):'}
+                  </span>
+                  <p className="text-slate-800 dark:text-slate-200 italic text-xs leading-relaxed bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
                     {viewingFeedingReport.generalNotes}
                   </p>
                 </div>

@@ -327,8 +327,6 @@ export interface Translations {
   addHoliday: string;
   holidayName: string;
   holidayDate: string;
-  academicCalendarTitle: string;
-  academicCalendarDesc: string;
   backupHistory: string;
   noBackupHistory: string;
   createdOn: string;
@@ -532,8 +530,8 @@ export const translations: Record<Language, Translations> = {
     tableStart: 'Start',
     tableEnd: 'End',
     tableDuration: 'Duration',
-    gapsChallengesLabel: 'Gaps, Challenges or Observations',
-    gapsChallengesPlaceholder: 'Describe any shortages, problems or observations encountered today...',
+    gapsChallengesLabel: 'በዕለቱ የተፈጠሩ ክፍተቶች ወይም ተግዳሮቶች (Gaps & Challenges)',
+    gapsChallengesPlaceholder: 'በዕለቱ ያጋጠሙ ክፍተቶች ወይም ተግዳሮቶች ካሉ እዚህ ይግለጹ (Describe any gaps, challenges or observations)...',
     clearFormBtn: 'Clear Form',
     saveReportBtn: 'Save Report',
     feedingSavedSuccess: 'Feeding report saved successfully',
@@ -672,8 +670,6 @@ export const translations: Record<Language, Translations> = {
     addHoliday: 'Add Holiday',
     holidayName: 'Holiday Name',
     holidayDate: 'Holiday Date',
-    academicCalendarTitle: 'Ethiopian Academic Calendar',
-    academicCalendarDesc: 'Manage semesters, terms, and holidays aligned with the Ethiopian calendar',
     backupHistory: 'Backup History',
     noBackupHistory: 'No backups created yet.',
     createdOn: 'Created on',
@@ -1016,8 +1012,6 @@ export const translations: Record<Language, Translations> = {
     addHoliday: 'በዓል ጨምር',
     holidayName: 'የበዓሉ ስም',
     holidayDate: 'የበዓሉ ቀን',
-    academicCalendarTitle: 'የኢትዮጵያ የትምህርት ካላንደር',
-    academicCalendarDesc: 'ከኢትዮጵያ ካላንደር ጋር የተጣጣሙ ሴሚስተሮችንና የበዓል ቀናትን ያስተካክሉ',
     backupHistory: 'የቀደምት መጠባበቂያዎች ታሪክ',
     noBackupHistory: 'እስካሁን የተወሰደ መጠባበቂያ የለም።',
     createdOn: 'የተፈጠረበት ቀን',
