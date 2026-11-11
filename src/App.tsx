@@ -24,8 +24,8 @@ import {
 import { SAMPLE_STUDENTS, getSampleAttendance, getSampleFeedingReport } from './utils/sampleData.ts';
 import { getTodayDateString } from './utils/attendance.ts';
 import { getTodayEthiopian, formatEthiopianDisplay } from './utils/ethiopianCalendar.ts';
-import { BottomNav } from './components/BottomNav.tsx';
 import { HomeScreen } from './components/HomeScreen.tsx';
+import { MobileNavDrawer } from './components/MobileNavDrawer.tsx';
 import { TakeAttendanceScreen } from './components/TakeAttendanceScreen.tsx';
 import { StudentsScreen } from './components/StudentsScreen.tsx';
 import { DataScreen } from './components/DataScreen.tsx';
@@ -50,6 +50,7 @@ import {
   Moon,
   Globe,
   WifiOff,
+  Menu,
 } from 'lucide-react';
 import { LanguageProvider, useTranslation } from './i18n/LanguageContext.tsx';
 
@@ -87,9 +88,10 @@ function AppContent() {
   const [takeAttendanceDate, setTakeAttendanceDate] = useState<string>(getTodayDateString());
   const [historySelectedDate, setHistorySelectedDate] = useState<string | null>(null);
 
-  // Modal State
+  // Modal & Drawer State
   const [isExcelModalOpen, setIsExcelModalOpen] = useState(false);
   const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   // Toast feedback state
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -365,19 +367,31 @@ function AppContent() {
       <header className="sticky top-0 z-30 bg-white/98 dark:bg-[#151F38]/98 backdrop-blur-md border-b border-[#E2E8F0] dark:border-[#2B3A67] shadow-xs transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="h-14 sm:h-16 flex items-center justify-between gap-3">
-            {/* Brand Logo & Class Name */}
-            <button
-              type="button"
-              onClick={() => setCurrentTab('home')}
-              className="text-left focus:outline-hidden cursor-pointer min-w-0 flex items-center gap-3 shrink-0"
-              aria-label="RollCall Home"
-            >
-              <AppLogo
-                size="md"
-                showText={true}
-                subtitle={settings.className || 'Student Attendance & Feeding'}
-              />
-            </button>
+            {/* Left: Mobile Drawer Menu Button & Brand Logo */}
+            <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
+              <button
+                type="button"
+                onClick={() => setIsMobileDrawerOpen(true)}
+                className="md:hidden p-2 -ml-1 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer flex items-center justify-center shrink-0"
+                aria-label={language === 'am' ? 'የአሰሳ ማውጫ ክፈት' : 'Open Navigation Menu'}
+                title={language === 'am' ? 'ማውጫ' : 'Navigation Menu'}
+              >
+                <Menu className="w-5 h-5 text-[#173B65] dark:text-[#38BDF8]" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCurrentTab('home')}
+                className="text-left focus:outline-hidden cursor-pointer min-w-0 flex items-center gap-2 sm:gap-3"
+                aria-label="RollCall Home"
+              >
+                <AppLogo
+                  size="md"
+                  showText={true}
+                  subtitle={settings.className || 'Student Attendance & Feeding'}
+                />
+              </button>
+            </div>
 
             {/* Desktop Navigation Links */}
             <nav aria-label="Desktop Navigation" className="hidden md:flex items-center gap-1">
@@ -495,8 +509,8 @@ function AppContent() {
         </div>
       )}
 
-      {/* Main responsive container with bottom dock clearance on mobile */}
-      <main className="max-w-7xl mx-auto min-h-screen px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-32 sm:pb-36 md:pb-14">
+      {/* Main responsive container */}
+      <main className="max-w-7xl mx-auto min-h-screen px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-12 md:pb-14">
         {currentTab === 'home' && (
           <HomeScreen
             students={students}
@@ -598,8 +612,17 @@ function AppContent() {
         )}
       </main>
 
-      {/* Persistent Bottom Navigation */}
-      <BottomNav currentTab={currentTab} onSelectTab={setCurrentTab} />
+      {/* Slide-out Mobile Navigation Drawer */}
+      <MobileNavDrawer
+        isOpen={isMobileDrawerOpen}
+        onClose={() => setIsMobileDrawerOpen(false)}
+        currentTab={currentTab}
+        onSelectTab={setCurrentTab}
+        settings={settings}
+        onUpdateSettings={handleUpdateSettings}
+        onOpenInstallModal={() => setIsInstallModalOpen(true)}
+        showToast={showToast}
+      />
 
       {/* Floating Action Button for Complete Daily Report Export (hidden on attendance taking screen to prevent overlapping attendance action dock) */}
       {currentTab !== 'attendance' && (

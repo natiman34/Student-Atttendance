@@ -197,12 +197,12 @@ export const ExportCompleteReportFab: React.FC<ExportCompleteReportFabProps> = (
 
   return (
     <>
-      {/* Floating Action Button - Positioned safely above bottom nav without blocking form fields */}
+      {/* Floating Action Button */}
       <aside
         aria-label="Export Actions"
         style={{
           position: 'fixed',
-          bottom: 'calc(4.75rem + env(safe-area-inset-bottom, 0px))',
+          bottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))',
           right: '1rem',
           zIndex: 40,
         }}
