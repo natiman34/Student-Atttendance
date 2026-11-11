@@ -432,17 +432,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <span>{t.importRosterBtn}</span>
             </button>
 
-            {onOpenInstallModal && (
-              <button
-                type="button"
-                onClick={onOpenInstallModal}
-                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xs text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
-                title="Download Standalone Android APK or Install Web App"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>{language === 'am' ? 'APK አውርድ / ጫን' : 'APK / Install'}</span>
-              </button>
-            )}
           </div>
         </div>
 

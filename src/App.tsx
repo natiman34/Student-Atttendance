@@ -496,7 +496,7 @@ function AppContent() {
       )}
 
       {/* Main responsive container with bottom dock clearance on mobile */}
-      <main className="max-w-7xl mx-auto min-h-screen px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-28 md:pb-14">
+      <main className="max-w-7xl mx-auto min-h-screen px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-32 sm:pb-36 md:pb-14">
         {currentTab === 'home' && (
           <HomeScreen
             students={students}
