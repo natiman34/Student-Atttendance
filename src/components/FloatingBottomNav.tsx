@@ -13,12 +13,12 @@ import {
 } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext.tsx';
 
-interface FloatingTopNavProps {
+interface FloatingBottomNavProps {
   currentTab: TabType;
   onSelectTab: (tab: TabType) => void;
 }
 
-export const FloatingTopNav: React.FC<FloatingTopNavProps> = ({
+export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
   currentTab,
   onSelectTab,
 }) => {
@@ -64,7 +64,7 @@ export const FloatingTopNav: React.FC<FloatingTopNavProps> = ({
 
   const handleScroll = (direction: 'left' | 'right') => {
     if (!navContainerRef.current) return;
-    const offset = direction === 'left' ? -200 : 200;
+    const offset = direction === 'left' ? -180 : 180;
     navContainerRef.current.scrollBy({ left: offset, behavior: 'smooth' });
   };
 
@@ -162,12 +162,15 @@ export const FloatingTopNav: React.FC<FloatingTopNavProps> = ({
 
   return (
     <nav
-      aria-label="App Floating Top Navigation"
-      className="w-full max-w-4xl mx-auto select-none pointer-events-auto"
+      aria-label="Floating Bottom Navigation"
+      style={{
+        bottom: 'max(1rem, calc(env(safe-area-inset-bottom, 0px) + 0.75rem))',
+      }}
+      className="fixed left-3 right-3 sm:left-auto sm:right-auto sm:max-w-2xl sm:inset-x-0 mx-auto z-40 select-none pointer-events-none"
     >
-      {/* Floating Telegram-inspired pill bar */}
-      <div className="relative bg-white/95 dark:bg-[#151F38]/95 backdrop-blur-xl rounded-2xl sm:rounded-full border border-slate-200/90 dark:border-slate-700/80 shadow-[0_8px_30px_rgba(23,59,101,0.12)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.50)] p-1.5 transition-all">
-        {/* Left Arrow Button (visible on hover / wide screens when scrollable) */}
+      {/* Floating Telegram-inspired pill dock */}
+      <div className="relative pointer-events-auto bg-white/95 dark:bg-[#151F38]/95 backdrop-blur-xl rounded-2xl sm:rounded-full border border-slate-200/90 dark:border-slate-700/80 shadow-[0_10px_35px_rgba(23,59,101,0.16)] dark:shadow-[0_14px_45px_rgba(0,0,0,0.60)] p-1.5 transition-all">
+        {/* Left Arrow Button for Tablet / Desktop when scrollable */}
         {canScrollLeft && (
           <button
             type="button"
@@ -220,7 +223,7 @@ export const FloatingTopNav: React.FC<FloatingTopNavProps> = ({
           })}
         </div>
 
-        {/* Right Arrow Button (visible on hover / wide screens when scrollable) */}
+        {/* Right Arrow Button for Tablet / Desktop when scrollable */}
         {canScrollRight && (
           <button
             type="button"

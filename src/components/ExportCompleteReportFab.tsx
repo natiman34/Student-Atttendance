@@ -197,16 +197,16 @@ export const ExportCompleteReportFab: React.FC<ExportCompleteReportFabProps> = (
 
   return (
     <>
-      {/* Floating Action Button */}
+      {/* Floating Action Button (Positioned on the Left Side above bottom nav) */}
       <aside
         aria-label="Export Actions"
         style={{
           position: 'fixed',
-          bottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))',
-          right: '1rem',
+          bottom: 'calc(4.85rem + env(safe-area-inset-bottom, 0px))',
+          left: '1rem',
           zIndex: 40,
         }}
-        className="flex flex-col items-end print:hidden pointer-events-auto"
+        className="flex flex-col items-start print:hidden pointer-events-auto"
       >
         {isMinimized ? (
           // Minimized Compact Floating Circle (Does not block inputs or text)
@@ -229,7 +229,7 @@ export const ExportCompleteReportFab: React.FC<ExportCompleteReportFabProps> = (
               onClick={toggleMinimize}
               title="Expand export button (አስፋ)"
               aria-label="Expand export button"
-              className="absolute -top-2 -left-2 w-5 h-5 rounded-full bg-slate-800 text-white flex items-center justify-center text-[10px] shadow hover:bg-slate-700 border border-slate-600"
+              className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-slate-800 text-white flex items-center justify-center text-[10px] shadow hover:bg-slate-700 border border-slate-600 cursor-pointer"
             >
               <ChevronUp className="w-3 h-3" />
             </button>
