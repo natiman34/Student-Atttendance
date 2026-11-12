@@ -441,7 +441,7 @@ function AppContent() {
       </header>
 
       {/* Main responsive container with bottom padding to prevent bottom nav overlap */}
-      <main className="max-w-7xl mx-auto min-h-screen px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-36 sm:pb-40">
+      <main className="max-w-7xl mx-auto min-h-screen px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-48 sm:pb-52">
         {currentTab === 'home' && (
           <HomeScreen
             students={students}

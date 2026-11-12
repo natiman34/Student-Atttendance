@@ -202,7 +202,7 @@ export const ExportCompleteReportFab: React.FC<ExportCompleteReportFabProps> = (
         aria-label="Export Actions"
         style={{
           position: 'fixed',
-          bottom: 'calc(6.35rem + env(safe-area-inset-bottom, 0px))',
+          bottom: 'calc(8.5rem + env(safe-area-inset-bottom, 0px))',
           left: '1rem',
           zIndex: 40,
         }}

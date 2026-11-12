@@ -817,7 +817,7 @@ export const TakeAttendanceScreen: React.FC<TakeAttendanceScreenProps> = ({
       {/* Floating Action Bar (Sticky above bottom floating nav) */}
       <div
         style={{
-          bottom: 'calc(6.35rem + env(safe-area-inset-bottom, 0px))',
+          bottom: 'calc(8.5rem + env(safe-area-inset-bottom, 0px))',
         }}
         className="fixed left-0 right-0 z-30 p-3 pointer-events-none"
       >

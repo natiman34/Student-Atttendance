@@ -164,7 +164,7 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
     <nav
       aria-label="Floating Bottom Navigation"
       style={{
-        bottom: 'max(2.5rem, calc(env(safe-area-inset-bottom, 0px) + 2rem))',
+        bottom: 'max(4.5rem, calc(env(safe-area-inset-bottom, 0px) + 4rem))',
       }}
       className="fixed left-3 right-3 sm:left-auto sm:right-auto sm:max-w-2xl sm:inset-x-0 mx-auto z-40 select-none pointer-events-none"
     >
