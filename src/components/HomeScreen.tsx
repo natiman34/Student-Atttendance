@@ -52,7 +52,6 @@ interface HomeScreenProps {
   onNavigateToStudents: () => void;
   onNavigateToReports?: (subTab?: 'feeding' | 'attendance' | 'history' | 'export') => void;
   onOpenExcelImport: () => void;
-  onOpenInstallModal?: () => void;
   onLoadSampleData?: () => void;
 }
 
@@ -66,7 +65,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onNavigateToStudents,
   onNavigateToReports,
   onOpenExcelImport,
-  onOpenInstallModal,
   onLoadSampleData,
 }) => {
   const { language, t } = useTranslation();
@@ -386,17 +384,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               <span>{t.loadDemoRoster}</span>
-            </button>
-          )}
-
-          {onOpenInstallModal && (
-            <button
-              type="button"
-              onClick={onOpenInstallModal}
-              className="w-full py-2.5 px-4 rounded-2xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 hover:bg-teal-100 dark:hover:bg-teal-900/40 text-teal-800 dark:text-teal-200 font-bold text-xs flex items-center justify-center gap-2 transition active:scale-[0.98] cursor-pointer mt-2"
-            >
-              <Download className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-              <span>{language === 'am' ? 'አፕ አውርድ (Google Chrome)' : 'Download App (Google Chrome)'}</span>
             </button>
           )}
         </div>

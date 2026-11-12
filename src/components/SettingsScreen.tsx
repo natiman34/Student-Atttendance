@@ -55,7 +55,6 @@ interface SettingsScreenProps {
   onClearAll: () => void;
   onOpenExcelImport: () => void;
   onShowToast: (message: string, type?: 'success' | 'error' | 'info') => void;
-  onOpenInstallModal?: () => void;
   onNavigateToTab?: (tab: string) => void;
 }
 
@@ -69,7 +68,6 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onClearAll,
   onOpenExcelImport,
   onShowToast,
-  onOpenInstallModal,
   onNavigateToTab,
 }) => {
   const { language, setLanguage, t } = useTranslation();
@@ -540,39 +538,6 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             <Download className="w-5 h-5 text-slate-600 dark:text-slate-400" />
             <span>Export CSV</span>
           </button>
-        </div>
-      </section>
-
-      {/* Google Chrome Application Download & Installation */}
-      <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 shadow-xs border border-[#0D9488]/30 dark:border-[#0D9488]/40 space-y-4">
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <h2 className="text-xs font-bold text-[#0D9488] dark:text-[#2DD4BF] uppercase tracking-wider flex items-center gap-1.5">
-              <Download className="w-4 h-4" />
-              <span>{language === 'am' ? 'የጎግል ክሮም አፕ ማውረጃ (Google Chrome Download)' : 'Google Chrome App Download'}</span>
-            </h2>
-            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-              {language === 'am'
-                ? 'አፑን በGoogle Chrome በኩል ወደ አንድሮይድ ስልክዎ ወይም ኮምፒውተርዎ ያውርዱ። ያለ ኢንተርኔት 100% በራሱ ይሰራል!'
-                : 'Download and install the application through Google Chrome for Android phones and desktop. Runs 100% offline!'}
-            </p>
-          </div>
-          <span className="text-[11px] font-mono font-bold bg-teal-100 dark:bg-teal-950 text-teal-800 dark:text-teal-300 px-2.5 py-0.5 rounded-full shrink-0">
-            Chrome PWA
-          </span>
-        </div>
-
-        <div className="pt-1">
-          {onOpenInstallModal && (
-            <button
-              type="button"
-              onClick={onOpenInstallModal}
-              className="w-full p-3.5 rounded-2xl bg-[#173B65] hover:bg-[#102a4a] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-98 cursor-pointer"
-            >
-              <Download className="w-4 h-4 text-[#2DD4BF]" />
-              <span>{language === 'am' ? 'አፕ አውርድ (Google Chrome)' : 'Download App (Google Chrome)'}</span>
-            </button>
-          )}
         </div>
       </section>
 

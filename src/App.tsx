@@ -25,7 +25,7 @@ import { SAMPLE_STUDENTS, getSampleAttendance, getSampleFeedingReport } from './
 import { getTodayDateString } from './utils/attendance.ts';
 import { getTodayEthiopian, formatEthiopianDisplay } from './utils/ethiopianCalendar.ts';
 import { HomeScreen } from './components/HomeScreen.tsx';
-import { MobileNavDrawer } from './components/MobileNavDrawer.tsx';
+import { FloatingBottomNav } from './components/FloatingBottomNav.tsx';
 import { TakeAttendanceScreen } from './components/TakeAttendanceScreen.tsx';
 import { StudentsScreen } from './components/StudentsScreen.tsx';
 import { DataScreen } from './components/DataScreen.tsx';
@@ -34,7 +34,6 @@ import { ReportsScreen, ReportSubTab } from './components/ReportsScreen.tsx';
 import { SettingsScreen } from './components/SettingsScreen.tsx';
 import { Toast } from './components/Toast.tsx';
 import { ExcelImportModal } from './components/ExcelImportModal.tsx';
-import { InstallAppModal } from './components/InstallAppModal.tsx';
 import { ExportCompleteReportFab } from './components/ExportCompleteReportFab.tsx';
 import { AppLogo } from './components/AppLogo.tsx';
 import {
@@ -45,12 +44,10 @@ import {
   Calendar,
   BarChart3,
   Settings,
-  Download,
   Sun,
   Moon,
   Globe,
   WifiOff,
-  Menu,
 } from 'lucide-react';
 import { LanguageProvider, useTranslation } from './i18n/LanguageContext.tsx';
 
@@ -88,10 +85,8 @@ function AppContent() {
   const [takeAttendanceDate, setTakeAttendanceDate] = useState<string>(getTodayDateString());
   const [historySelectedDate, setHistorySelectedDate] = useState<string | null>(null);
 
-  // Modal & Drawer State
+  // Modal State
   const [isExcelModalOpen, setIsExcelModalOpen] = useState(false);
-  const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
-  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   // Toast feedback state
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -367,18 +362,8 @@ function AppContent() {
       <header className="sticky top-0 z-30 bg-white/98 dark:bg-[#151F38]/98 backdrop-blur-md border-b border-[#E2E8F0] dark:border-[#2B3A67] shadow-xs transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="h-14 sm:h-16 flex items-center justify-between gap-3">
-            {/* Left: Mobile Drawer Menu Button & Brand Logo */}
-            <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
-              <button
-                type="button"
-                onClick={() => setIsMobileDrawerOpen(true)}
-                className="md:hidden p-2 -ml-1 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer flex items-center justify-center shrink-0"
-                aria-label={language === 'am' ? 'የአሰሳ ማውጫ ክፈት' : 'Open Navigation Menu'}
-                title={language === 'am' ? 'ማውጫ' : 'Navigation Menu'}
-              >
-                <Menu className="w-5 h-5 text-[#173B65] dark:text-[#38BDF8]" />
-              </button>
-
+            {/* Left: Brand Logo & Class Name */}
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <button
                 type="button"
                 onClick={() => setCurrentTab('home')}
@@ -429,19 +414,6 @@ function AppContent() {
 
             {/* Right Side Header Items: Date Badge, Language Toggle, Theme Toggle */}
             <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-              {/* Download App for Google Chrome Button */}
-              <button
-                type="button"
-                onClick={() => setIsInstallModalOpen(true)}
-                className="px-2.5 sm:px-3 py-1.5 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-200 border cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-[#0D9488] bg-[#0D9488] hover:bg-[#0B7A70] border-[#0D9488] text-white active:scale-95 shadow-2xs font-bold text-xs"
-                title={language === 'am' ? 'አፕ አውርድ (Download App)' : 'Download App (Google Chrome)'}
-                aria-label="Download App"
-              >
-                <Download className="w-3.5 h-3.5 text-white" />
-                <span className="hidden md:inline text-[11px] font-bold">
-                  {language === 'am' ? 'አፕ አውርድ' : 'Download App'}
-                </span>
-              </button>
 
               {/* Language Switcher Button */}
               <button
@@ -510,7 +482,7 @@ function AppContent() {
       )}
 
       {/* Main responsive container */}
-      <main className="max-w-7xl mx-auto min-h-screen px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-12 md:pb-14">
+      <main className="max-w-7xl mx-auto min-h-screen px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-28 sm:pb-32 md:pb-14">
         {currentTab === 'home' && (
           <HomeScreen
             students={students}
@@ -522,7 +494,6 @@ function AppContent() {
             onNavigateToStudents={() => setCurrentTab('students')}
             onNavigateToReports={handleNavigateToReports}
             onOpenExcelImport={() => setIsExcelModalOpen(true)}
-            onOpenInstallModal={() => setIsInstallModalOpen(true)}
             onLoadSampleData={handleLoadSampleData}
           />
         )}
@@ -606,23 +577,10 @@ function AppContent() {
             onClearAll={handleClearAll}
             onOpenExcelImport={() => setIsExcelModalOpen(true)}
             onShowToast={showToast}
-            onOpenInstallModal={() => setIsInstallModalOpen(true)}
             onNavigateToTab={(tab) => setCurrentTab(tab as TabType)}
           />
         )}
       </main>
-
-      {/* Slide-out Mobile Navigation Drawer */}
-      <MobileNavDrawer
-        isOpen={isMobileDrawerOpen}
-        onClose={() => setIsMobileDrawerOpen(false)}
-        currentTab={currentTab}
-        onSelectTab={setCurrentTab}
-        settings={settings}
-        onUpdateSettings={handleUpdateSettings}
-        onOpenInstallModal={() => setIsInstallModalOpen(true)}
-        showToast={showToast}
-      />
 
       {/* Floating Action Button for Complete Daily Report Export (hidden on attendance taking screen to prevent overlapping attendance action dock) */}
       {currentTab !== 'attendance' && (
@@ -634,6 +592,12 @@ function AppContent() {
         />
       )}
 
+      {/* Telegram-style Floating Bottom Navigation for Mobile */}
+      <FloatingBottomNav
+        currentTab={currentTab}
+        onSelectTab={setCurrentTab}
+      />
+
       {/* Feedback Toast */}
       <Toast message={toastMessage} type={toastType} />
 
@@ -642,17 +606,6 @@ function AppContent() {
         isOpen={isExcelModalOpen}
         onClose={() => setIsExcelModalOpen(false)}
         onImport={handleExcelImport}
-      />
-
-      {/* Install / Download App in Chrome Modal */}
-      <InstallAppModal
-        isOpen={isInstallModalOpen}
-        onClose={() => setIsInstallModalOpen(false)}
-        appUrl={
-          typeof window !== 'undefined' && window.location.origin.includes('run.app')
-            ? window.location.origin
-            : 'https://ais-pre-77mkgbnlv2haaguuixrahj-722978092860.europe-west2.run.app'
-        }
       />
     </div>
   );
