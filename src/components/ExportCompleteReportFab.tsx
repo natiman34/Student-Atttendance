@@ -202,11 +202,11 @@ export const ExportCompleteReportFab: React.FC<ExportCompleteReportFabProps> = (
         aria-label="Export Actions"
         style={{
           position: 'fixed',
-          bottom: 'calc(4.75rem + env(safe-area-inset-bottom, 0px))',
+          bottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))',
           right: '1rem',
           zIndex: 40,
         }}
-        className="md:!bottom-5 flex flex-col items-end print:hidden pointer-events-auto"
+        className="flex flex-col items-end print:hidden pointer-events-auto"
       >
         {isMinimized ? (
           // Minimized Compact Floating Circle (Does not block inputs or text)

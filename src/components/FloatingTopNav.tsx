@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { TabType } from '../types.ts';
 import {
   Home,
@@ -8,21 +8,46 @@ import {
   FileSpreadsheet,
   Calendar,
   BarChart3,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext.tsx';
 
-interface FloatingBottomNavProps {
+interface FloatingTopNavProps {
   currentTab: TabType;
   onSelectTab: (tab: TabType) => void;
 }
 
-export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
+export const FloatingTopNav: React.FC<FloatingTopNavProps> = ({
   currentTab,
   onSelectTab,
 }) => {
   const { language } = useTranslation();
   const navContainerRef = useRef<HTMLDivElement>(null);
   const activeItemRef = useRef<HTMLButtonElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  // Check scroll bounds for edge fade / arrow controls
+  const updateScrollBounds = useCallback(() => {
+    const el = navContainerRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setCanScrollLeft(scrollLeft > 6);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 6);
+  }, []);
+
+  useEffect(() => {
+    updateScrollBounds();
+    const el = navContainerRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', updateScrollBounds, { passive: true });
+    window.addEventListener('resize', updateScrollBounds);
+    return () => {
+      el.removeEventListener('scroll', updateScrollBounds);
+      window.removeEventListener('resize', updateScrollBounds);
+    };
+  }, [updateScrollBounds]);
 
   // Auto-scroll active item into view horizontally when currentTab changes
   useEffect(() => {
@@ -32,8 +57,16 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
         block: 'nearest',
         inline: 'center',
       });
+      // Recheck bounds after scroll animation completes
+      setTimeout(updateScrollBounds, 300);
     }
-  }, [currentTab]);
+  }, [currentTab, updateScrollBounds]);
+
+  const handleScroll = (direction: 'left' | 'right') => {
+    if (!navContainerRef.current) return;
+    const offset = direction === 'left' ? -200 : 200;
+    navContainerRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+  };
 
   const navItems: {
     tab: TabType;
@@ -129,14 +162,24 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
 
   return (
     <nav
-      aria-label="Mobile Floating Navigation"
-      style={{
-        bottom: 'max(0.75rem, env(safe-area-inset-bottom, 0.75rem))',
-      }}
-      className="md:hidden fixed left-3 right-3 sm:left-auto sm:right-auto sm:max-w-xl sm:inset-x-0 mx-auto z-40 select-none pointer-events-none"
+      aria-label="App Floating Top Navigation"
+      className="w-full max-w-4xl mx-auto select-none pointer-events-auto"
     >
       {/* Floating Telegram-inspired pill bar */}
-      <div className="pointer-events-auto bg-white/95 dark:bg-[#151F38]/95 backdrop-blur-xl rounded-2xl sm:rounded-full border border-slate-200/90 dark:border-slate-700/80 shadow-[0_8px_30px_rgba(23,59,101,0.14)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.55)] p-1.5 transition-all">
+      <div className="relative bg-white/95 dark:bg-[#151F38]/95 backdrop-blur-xl rounded-2xl sm:rounded-full border border-slate-200/90 dark:border-slate-700/80 shadow-[0_8px_30px_rgba(23,59,101,0.12)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.50)] p-1.5 transition-all">
+        {/* Left Arrow Button (visible on hover / wide screens when scrollable) */}
+        {canScrollLeft && (
+          <button
+            type="button"
+            onClick={() => handleScroll('left')}
+            aria-label="Scroll navigation left"
+            className="hidden sm:flex absolute left-1 top-1/2 -translate-y-1/2 z-10 w-7 h-7 items-center justify-center rounded-full bg-white dark:bg-[#1D2A4D] shadow-md border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+        )}
+
+        {/* Scrollable Container with All 7 Items Side-by-Side */}
         <div
           ref={navContainerRef}
           className="flex items-center gap-1.5 overflow-x-auto scroll-smooth scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-1 py-0.5"
@@ -176,6 +219,18 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
             );
           })}
         </div>
+
+        {/* Right Arrow Button (visible on hover / wide screens when scrollable) */}
+        {canScrollRight && (
+          <button
+            type="button"
+            onClick={() => handleScroll('right')}
+            aria-label="Scroll navigation right"
+            className="hidden sm:flex absolute right-1 top-1/2 -translate-y-1/2 z-10 w-7 h-7 items-center justify-center rounded-full bg-white dark:bg-[#1D2A4D] shadow-md border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        )}
       </div>
     </nav>
   );

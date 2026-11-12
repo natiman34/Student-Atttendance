@@ -814,12 +814,12 @@ export const TakeAttendanceScreen: React.FC<TakeAttendanceScreenProps> = ({
         )}
       </div>
 
-      {/* Floating Action Bar (Sticky above mobile floating nav, bottom-4 on desktop) */}
+      {/* Floating Action Bar (Sticky near screen bottom) */}
       <div
         style={{
-          bottom: 'calc(4.75rem + env(safe-area-inset-bottom, 0px))',
+          bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))',
         }}
-        className="fixed md:!bottom-4 left-0 right-0 z-30 p-3 pointer-events-none"
+        className="fixed left-0 right-0 z-30 p-3 pointer-events-none"
       >
         <div className="max-w-2xl mx-auto pointer-events-auto">
           <div className="bg-[#173B65]/98 dark:bg-[#151F38]/98 backdrop-blur-md rounded-2xl p-3 shadow-xl border border-[#173B65] dark:border-[#2B3A67] flex flex-col sm:flex-row items-center justify-between gap-3">
