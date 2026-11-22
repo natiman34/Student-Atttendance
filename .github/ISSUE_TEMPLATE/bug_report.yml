@@ -1,0 +1,105 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please fill out the details below to help us reproduce and fix the issue.
+
+  - type: input
+    id: version
+    attributes:
+      label: App Version
+      description: Which version are you using? (Check Settings screen)
+      placeholder: "e.g. 2.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Where did you encounter the bug?
+      options:
+        - Desktop Chrome/Edge/Firefox
+        - Desktop Safari
+        - Android Chrome (PWA installed)
+        - Android Chrome (browser)
+        - iOS Safari (PWA installed)
+        - iOS Safari (browser)
+        - Android Capacitor build
+        - iOS Capacitor build
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: Clear and concise description of the bug
+      placeholder: "When I..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Step-by-step instructions to reproduce the bug
+      placeholder: |
+        1. Open the app
+        2. Go to Students screen
+        3. Add a new student with Amharic name
+        4. Switch to Amharic language
+        5. Observe...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should have happened?
+      placeholder: "The student name should display correctly in Amharic..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: "The name shows as boxes/question marks..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots/Recordings
+      description: Drag and drop screenshots or screen recordings here
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console Logs/Errors
+      description: Paste any relevant console errors (open DevTools → Console)
+      render: shell
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information, configuration, or data that might help
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues for duplicates
+          required: true
+        - label: I can reproduce this on the live demo (https://tranquil-youtiao-db129b.netlify.app)
+          required: false

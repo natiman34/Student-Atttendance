@@ -1,8 +1,32 @@
 {
-  "name": "react-example",
-  "private": true,
-  "version": "0.0.0",
+  "name": "rollcall-attendance-app",
+  "version": "2.0.0",
+  "description": "RollCall — Offline-first Progressive Web App for student attendance and daily feeding program management. Features bilingual support (English/Amharic), Ethiopian calendar, comprehensive reporting (PDF/Word/Excel), PWA installability, and Capacitor mobile builds.",
   "type": "module",
+  "homepage": "https://tranquil-youtiao-db129b.netlify.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/student-attendance-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/student-attendance-app/issues"
+  },
+  "keywords": [
+    "attendance",
+    "student-management",
+    "feeding-program",
+    "pwa",
+    "offline-first",
+    "ethiopian-calendar",
+    "amharic",
+    "education",
+    "teacher-tools",
+    "react",
+    "typescript",
+    "capacitor"
+  ],
+  "author": "Yonatan Getachew <yonatan.getachew@example.com>",
+  "license": "MIT",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
@@ -28,6 +52,7 @@
     "motion": "^12.23.24",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
+    "react-is": "^19.3.1",
     "recharts": "^3.10.1",
     "vite": "^8.3.0",
     "xlsx": "^0.18.5"

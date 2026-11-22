@@ -1,100 +1,307 @@
-# RollCall – Student Attendance & Daily Feeding Management System
-### የተማሪዎች አቴንዳንስ እና የዕለት ምገባ ሪፖርት አስተዳደር ስርዓት
+# RollCall — Student Attendance & Feeding Management
 
-A high-performance, offline-first Progressive Web Application (PWA) designed for educational centers, schools, and charitable child-feeding programs in Ethiopia and bilingual environments. Built with **React 19**, **TypeScript**, **Tailwind CSS**, and **Vite**.
+![RollCall Banner](https://img.shields.io/badge/RollCall-Student%20Attendance%20%26%20Feeding-173B65?style=for-the-badge&logo=react&logoColor=white)
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20App-0D9488?style=for-the-badge&logo=netlify&logoColor=white)](https://tranquil-youtiao-db129b.netlify.app)
+[![React](https://img.shields.io/badge/React-19.0-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-7.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Vite](https://img.shields.io/badge/Vite-8.3-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4.3-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![PWA](https://img.shields.io/badge/PWA-Enabled-5A0FC8?style=flat-square&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps)
+[![Capacitor](https://img.shields.io/badge/Capacitor-8.6-119EFF?style=flat-square&logo=capacitor&logoColor=white)](https://capacitorjs.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
+
+> **A modern, offline-first Progressive Web App for teachers to manage classroom attendance and daily feeding programs — with bilingual support (English/Amharic), Ethiopian calendar integration, and comprehensive reporting.**
 
 ---
 
-## 🌟 Key Features
+## ✨ Key Features
 
-1. **📱 100% Mobile-First & Standalone Responsive Design**
-   - Optimized for all smartphone screen sizes (320px to 430px+), tablets, and desktop displays.
-   - Installable directly to Android and desktop home screens as a standalone app with its own app icon, splash screen, and offline service worker.
-   - Bottom navigation bar with safe-area insetting for Android navigation gestures.
+### 📊 **Attendance Management**
+- **Quick Daily Roll-Call** — Mark Present / Absent / Permission / Late with one tap
+- **Auto-Save Drafts** — Never lose progress; drafts persist across sessions
+- **Audit Trail** — Every modification logs timestamp, author, and reason
+- **Quick Notes** — Tag students with Sick, Excused, Late, Appointment
+- **Ethiopian Calendar Support** — Native Ethiopian date display and navigation
 
-2. **🇪🇹 Complete Ethiopian Calendar Integration (ባሕረ ሃሳብ)**
-   - Bidirectional Ethiopian (Geez) and Gregorian calendar conversion.
-   - Interactive Ethiopian date picker supporting all **13 Ethiopian months** (*መስከረም* through *ጳጉሜን*) with 5 or 6 leap days (`year % 4 === 3`).
-   - Dual calendar displays across all screens: Home, Attendance, Reports, Feeding, and History.
+### 🍽️ **Daily Feeding Program**
+- **Complete Feeding Reports** — Coordinator, food type, location, participant counts
+- **Activity Scheduler** — Lesson/Game/None with start/end times and duration calculation
+- **Individual Student Tracking** — Check off students who received meals
+- **Gaps & Challenges Log** — Document daily observations and issues
+- **Grade/Section Filtering** — Organize feeding by class structure
 
-3. **✅ Fast 1-Tap Attendance Marking**
-   - 3-status toggle (*Present*, *Absent*, *Permission / ፈቃድ*, with optional *Late*).
-   - "Mark All Present" fast-track action for rapid roll-call.
-   - Quick student notes with one-tap chips (*ታሟል*, *ፈቃድ*, *ያረፈደ*, *ልዩ ሁኔታ*).
-   - Instant real-time filtering and live stats counters.
+### 📈 **Comprehensive Reporting**
+| Report Type | Formats | Description |
+|-------------|---------|-------------|
+| **Daily** | PDF, Word, Excel | Attendance + Feeding combined or separate |
+| **Weekly** | PDF, Word, Excel | Aggregated weekly summaries with trends |
+| **Monthly** | PDF, Word, Excel | Month-over-month comparison charts |
+| **Termly** | PDF, Word, Excel | Semester/term breakdowns with feeding stats |
+| **Annual** | PDF, Word, Excel | Full academic year with term comparisons |
+| **Individual Student** | PDF | Complete profile with attendance history |
 
-4. **🍲 Daily Feeding Program & Activity Schedule**
-   - Full tracking of coordinator on duty, food type, food quantity in kg, feeding location, children fed count, and volunteer numbers.
-   - Activity schedule selector: **ትምህርት (Lesson)**, **ጨዋታ (Game)**, or **ምንም (Nothing)**.
-   - **Interactive Time-Entry Widget**: Tap-friendly time selector with 24-hour and Ethiopian time support, quick presets, "አሁን (Now)" shortcut, and relative offset increments (`+15m`, `+30m`, `+45m`, `+60m`).
-   - **Automatic Activity Duration Calculation**: Calculates duration badges (e.g., `45 ደቂቃ (45 min)`) and highlights invalid time order warnings in red if end time precedes start time.
-   - Total scheduled duration aggregation in real time.
+### 🌐 **Internationalization & Accessibility**
+- **Full English ↔ Amharic (አማርኛ) Support** — UI, reports, and exports
+- **RTL-Ready Layout** — Proper Amharic text rendering with Noto Sans Ethiopic & Abyssinica SIL fonts
+- **Light / Dark / System Theme** — Persisted preference with smooth transitions
+- **Offline-First Architecture** — Service Worker + localStorage; works without internet
 
-5. **🛡️ Automatic Draft Saving (Zero Data Loss Protection)**
-   - Protects against accidental browser closing, tab switches, or battery shutoffs.
-   - Automatically debounces and persists in-progress attendance records, notes, coordinator details, food weights, and activity schedules to local storage.
-   - Visual status indicators: `በማስቀመጥ ላይ... (Saving...)` and `ተቀምጧል (Saved)`.
-   - Restores the most recent draft automatically upon reopening with a "ረቂቁን ሰርዝ (Discard Draft)" button with user confirmation modal.
+### 📱 **PWA & Mobile Experience**
+- **Installable** — Add to home screen on Android, iOS, Windows, macOS
+- **Standalone Mode** — Launches without browser chrome
+- **Responsive Design** — Mobile-first, works beautifully on desktop
+- **Safe-Area Insets** — Proper notch/Dynamic Island handling
+- **Push-to-Install** — Native browser install prompts
 
-6. **📑 Complete Multi-Format Report Generation**
-   - **PDF Generation**: Native client-side PDF export via `jspdf` and `jspdf-autotable`.
-   - **Microsoft Word (.docx)**: Word document generation with formatted tables and official header blocks via `docx`.
-   - **Microsoft Excel (.xlsx)**: Multi-sheet spreadsheets with styling and summaries via `xlsx`.
-   - **Pre-Export Validation**: Stops empty or misleading exports with bilingual warnings (Amharic & English) guiding users directly to student registration or report entry.
-   - **Non-Obstructive Floating Export Button**: Collapsible floating action button with minimize toggle (compact 42px badge) that prevents covering inputs or bottom navigation.
+### ⚙️ **Data Management**
+- **JSON Backup/Restore** — Full data export/import with versioning
+- **Excel Import** — Bulk student roster import (.xlsx/.csv)
+- **Sample Data Loader** — One-click demo class with attendance & feeding records
+- **Student Archiving** — Soft-delete with preserved history
+- **School Terms & Holidays** — Configure academic calendar
 
-7. **💾 Local-First Security & Portability**
-   - Zero external cloud or server dependencies required to run or store records.
-   - Full JSON backup export and restore with cryptographic schema validation.
-   - Excel roster import and CSV attendance exports.
+---
+
+## 🖼️ Screenshots
+
+### Dashboard (Home)
+| Light Mode | Dark Mode | Ethiopian Calendar |
+|:---:|:---:|:---:|
+| ![Home Light](home_populated.png) | ![Home Dark](home_verified.png) | ![Home Ethiopian](home_populated_eth.png) |
+
+### Attendance & Students
+| Take Attendance | Student Roster | Student Details |
+|:---:|:---:|:---:|
+| ![Attendance](mobile_view.png) | ![Students](mobile_polished.png) | ![Student Detail](mobile_settings_v2.png) |
+
+### Reports & Feeding
+| Reports Hub | Feeding Report | Report History |
+|:---:|:---:|:---:|
+| ![Reports](reports_screen_verified.png) | ![Feeding](feeding_table_verified.png) | ![History](report_history_verified.png) |
+
+### Desktop Experience
+| Desktop Dashboard | Desktop Reports | Export Center |
+|:---:|:---:|:---:|
+| ![Desktop](home_desktop.png) | ![Desktop Reports](desktop_verified_fonts.png) | ![Export Hub](export_hub_view.png) |
+
+---
+
+## 🛠️ Tech Stack
+
+| Category | Technologies |
+|----------|--------------|
+| **Frontend** | React 19, TypeScript, Vite 8 |
+| **Styling** | Tailwind CSS 4, CSS Variables, Custom Fonts |
+| **State** | React Hooks (useState, useEffect, useCallback), localStorage |
+| **Charts** | Recharts 3 (attendance trends, monthly comparisons) |
+| **Export** | jsPDF + jsPDF-AutoTable (PDF), docx (Word), xlsx (Excel) |
+| **PWA** | Vite PWA Plugin, Workbox, Service Worker |
+| **Mobile** | Capacitor 8 (Android/iOS builds) |
+| **i18n** | Custom Context-based solution (English/Amharic) |
+| **Calendar** | Custom Ethiopian Calendar implementation |
+| **Date/Time** | Native Intl API, custom formatting utilities |
+| **Icons** | Lucide React |
+| **Animation** | Motion (Framer Motion successor) |
+| **Testing** | tsx native test runner |
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) v18+ (or Bun / PNPM)
-- Modern web browser (Google Chrome, Microsoft Edge, Safari, Firefox)
+- **Node.js** 18+ and **npm** 9+
+- **Git** for version control
 
-### Installation & Development
+### Installation
+
 ```bash
-# Clone or navigate to the repository
-cd rollcall
+# Clone the repository
+git clone https://github.com/your-username/student-attendance-app.git
+cd student-attendance-app
 
 # Install dependencies
 npm install
 
-# Start Vite development server
+# Start development server
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your mobile or desktop browser.
 
-### Building for Production
+The app will be available at `http://localhost:3000`
+
+### Build for Production
+
 ```bash
-# Build optimized production assets
+# Create optimized production build
 npm run build
 
 # Preview production build locally
 npm run preview
 ```
 
-### Running Automated Tests
+### Run Tests
+
 ```bash
-# Run the complete test suite (35 unit tests)
+# Run all unit tests
 npm test
+
+# Type-check only
+npm run lint
+```
+
+### Mobile Builds (Capacitor)
+
+```bash
+# Add Android platform (first time only)
+npx cap add android
+
+# Sync web assets to native project
+npx cap sync
+
+# Open in Android Studio
+npx cap open android
 ```
 
 ---
 
-## 📱 Mobile Installation (Android Chrome & Desktop)
+## 📁 Project Structure
 
-1. Open the deployed application URL in **Google Chrome** on your Android smartphone.
-2. Tap the Chrome menu (⋮) at the top right, or click the **"Install App"** prompt banner at the top of the screen.
-3. Select **"Add to Home screen"** or **"Install App"**.
-4. Confirm installation. The application icon **RollCall** will appear on your mobile home screen.
-5. Launching the app opens it in standalone mode without Chrome URL bars, navigation controls, or browser tabs.
+```
+student-atttendance/
+├── public/
+│   ├── fonts/                 # Noto Sans Ethiopic, Abyssinica SIL
+│   ├── icons/                 # PWA icons (192, 512, maskable)
+│   ├── manifest.json          # PWA manifest
+│   ├── sw.js                  # Service Worker
+│   └── assets/                # Static images
+├── src/
+│   ├── components/            # React components
+│   │   ├── HomeScreen.tsx
+│   │   ├── TakeAttendanceScreen.tsx
+│   │   ├── StudentsScreen.tsx
+│   │   ├── ReportsScreen.tsx
+│   │   ├── HistoryScreen.tsx
+│   │   ├── SettingsScreen.tsx
+│   │   ├── DataScreen.tsx
+│   │   ├── FeedingActivityTable.tsx
+│   │   ├── ExportReportsHub.tsx
+│   │   ├── ExportCompleteReportFab.tsx
+│   │   ├── ExcelImportModal.tsx
+│   │   ├── DailyFeedingReportForm.tsx
+│   │   ├── StudentDetailModal.tsx
+│   │   ├── StudentAttendanceReportView.tsx
+│   │   ├── ReportValidationModal.tsx
+│   │   ├── ReportStorageSettings.tsx
+│   │   ├── ReportHistory.tsx
+│   │   ├── PrintReportModal.tsx
+│   │   ├── ManualTimeEntryModal.tsx
+│   │   ├── EthiopianDatePicker.tsx
+│   │   ├── TimePickerWidget.tsx
+│   │   ├── FloatingBottomNav.tsx
+│   │   ├── AppLogo.tsx
+│   │   ├── Toast.tsx
+│   │   ├── ConfirmModal.tsx
+│   │   └── ErrorBoundary.tsx
+│   ├── i18n/
+│   │   ├── translations.ts    # English + Amharic translations
+│   │   └── LanguageContext.tsx
+│   ├── utils/
+│   │   ├── storage.ts         # localStorage persistence layer
+│   │   ├── attendance.ts      # Attendance calculations & helpers
+│   │   ├── ethiopianCalendar.ts # Ethiopian date conversion
+│   │   ├── feeding.ts         # Feeding report logic
+│   │   ├── exports.ts         # PDF/Word/Excel export utilities
+│   │   ├── reportAggregations.ts # Weekly/Monthly/Termly/Annual reports
+│   │   ├── termlyAnnualExports.ts # Term/Annual export formatting
+│   │   ├── studentExports.ts  # Individual student reports
+│   │   ├── combinedExports.ts # Combined attendance+feeding
+│   │   ├── timeUtils.ts       # Time formatting helpers
+│   │   ├── draftStorage.ts    # Draft persistence
+│   │   ├── sampleData.ts      # Demo data generator
+│   │   └── pdfFont.ts         # Amharic font registration for PDF
+│   ├── types.ts               # TypeScript interfaces & types
+│   ├── App.tsx                # Root component, routing, state
+│   ├── main.tsx               # Entry point
+│   └── index.css              # Global styles, Tailwind imports
+├── index.html                 # HTML template, PWA meta tags
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+└── README.md
+```
+
+---
+
+## 🌍 Live Application
+
+**🔗 [https://tranquil-youtiao-db129b.netlify.app](https://tranquil-youtiao-db129b.netlify.app)**
+
+The app is deployed as a Progressive Web App on Netlify with automatic HTTPS, CDN distribution, and instant cache invalidation on deploy.
+
+---
+
+## 📦 Deployment
+
+### Netlify (Recommended)
+1. Connect your GitHub repository to Netlify
+2. Build command: `npm run build`
+3. Publish directory: `dist`
+4. Netlify auto-detects `vite.config.ts` and configures headers for PWA
+
+### Vercel
+```bash
+npm i -g vercel
+vercel --prod
+```
+
+### Static Hosting (Any)
+Upload the `dist/` folder to any static host (GitHub Pages, Firebase Hosting, AWS S3 + CloudFront, etc.)
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read our contributing guidelines before submitting PRs.
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
 ## 📄 License
-MIT License. Built for community educational and child nutrition initiatives.
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 👨‍💻 Developer
+
+**Yonatan Getachew** — Full-Stack Developer
+
+- **Portfolio:** [https://yonatangetachew.netlify.app](https://yonatangetachew.netlify.app)
+- **GitHub:** [@your-github-username](https://github.com/your-github-username)
+- **LinkedIn:** [linkedin.com/in/yonatangetachew](https://linkedin.com/in/yonatangetachew)
+- **Email:** yonatan.getachew@example.com
+
+---
+
+## 🙏 Acknowledgments
+
+- **Ethiopian Calendar Algorithm** — Adapted from public domain implementations
+- **Noto Sans Ethiopic & Abyssinica SIL Fonts** — Google Fonts & SIL International
+- **Lucide Icons** — Beautiful open-source icon set
+- **Tailwind CSS** — Utility-first CSS framework
+- **Vite & React Teams** — Exceptional developer experience
+
+---
+
+<div align="center">
+
+**Built with ❤️ for educators everywhere**
+
+*RollCall — Making attendance simple, feeding programs organized, and reporting effortless.*
+
+</div>
