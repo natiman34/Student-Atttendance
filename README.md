@@ -279,12 +279,12 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 ## 👨‍💻 Developer
 
-**Yonatan Getachew** — Full-Stack Developer
+**Natnael Sema** — Full-Stack Developer
 
-- **Portfolio:** [https://yonatangetachew.netlify.app](https://yonatangetachew.netlify.app)
-- **GitHub:** [@your-github-username](https://github.com/your-github-username)
-- **LinkedIn:** [linkedin.com/in/yonatangetachew](https://linkedin.com/in/yonatangetachew)
-- **Email:** yonatan.getachew@example.com
+- **Portfolio:** [https://natnaelsema.netlify.app](https://natnaelsema.netlify.app)
+- **GitHub:** [@natiman34](https://github.com/natiman34)
+- **LinkedIn:** [linkedin.com/in/natnaelsema](https://www.linkedin.com/in/natnaelsema/)
+- **Email:** natim0570@gmail.com
 
 ---
 

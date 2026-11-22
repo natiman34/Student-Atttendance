@@ -25,7 +25,7 @@
     "typescript",
     "capacitor"
   ],
-  "author": "Yonatan Getachew <yonatan.getachew@example.com>",
+  "author": "Natnael Sema <natim0570@gmail.com>",
   "license": "MIT",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
