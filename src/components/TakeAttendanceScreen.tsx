@@ -311,7 +311,10 @@ export const TakeAttendanceScreen: React.FC<TakeAttendanceScreenProps> = ({
   // First click: Select status.
   // Second click on the same button: Unselect and return to blank status.
   // Clicking other button: Switches to other status immediately. Never both simultaneously.
-  const handleToggleStatus = (studentId: string, targetStatus: 'present' | 'permission') => {
+  const handleToggleStatus = (
+    studentId: string,
+    targetStatus: 'present' | 'permission' | 'late'
+  ) => {
     setRecords((prev) => {
       const copy = { ...prev };
       if (copy[studentId] === targetStatus) {
@@ -355,25 +358,29 @@ export const TakeAttendanceScreen: React.FC<TakeAttendanceScreenProps> = ({
     const finalized: Record<string, AttendanceStatus> = {};
     for (const student of activeStudents) {
       const st = records[student.id];
-      finalized[student.id] = st === 'present' || st === 'permission' ? st : 'absent';
+      finalized[student.id] =
+        st === 'present' || st === 'permission' || st === 'late' ? st : 'absent';
     }
     return finalized;
   };
 
-  // Live Stats calculation: Present, Permission, Unmarked (projected Absent), Total = Present + Permission + Absent
+  // Live Stats calculation: Present, Permission, Late, Unmarked (projected Absent)
   const stats = useMemo(() => {
     let present = 0;
     let permission = 0;
+    let late = 0;
     for (const student of activeStudents) {
       const st = records[student.id];
       if (st === 'present') present++;
       else if (st === 'permission') permission++;
+      else if (st === 'late') late++;
     }
-    const unmarked = activeStudents.length - present - permission;
+    const unmarked = activeStudents.length - present - permission - late;
     const rate = activeStudents.length > 0 ? Math.round((present / activeStudents.length) * 100) : 0;
     return {
       present,
       permission,
+      late,
       unmarked,
       absent: unmarked, // When finalized or exported, unmarked students are treated as absent
       totalStudents: activeStudents.length,
@@ -751,6 +758,24 @@ export const TakeAttendanceScreen: React.FC<TakeAttendanceScreenProps> = ({
                       <FileText className="w-3.5 h-3.5" />
                       <span>{t.permission}</span>
                     </button>
+
+                    {/* Late Toggle Option (only when enabled in Settings) */}
+                    {settings?.enableLateStatus && (
+                      <button
+                        type="button"
+                        onClick={() => handleToggleStatus(student.id, 'late')}
+                        aria-label={`Toggle Late for ${student.name} (click to select or unselect)`}
+                        aria-pressed={currentStatus === 'late'}
+                        className={`h-10 px-3.5 sm:px-4 min-w-[70px] rounded-xl flex items-center justify-center gap-1.5 font-bold text-xs transition-all active:scale-95 cursor-pointer ${
+                          currentStatus === 'late'
+                            ? 'bg-[#7C3AED] text-white shadow-xs ring-2 ring-[#7C3AED]/40'
+                            : 'bg-slate-100 dark:bg-slate-800 text-[#64748B] dark:text-slate-400 hover:bg-violet-50 dark:hover:bg-violet-950/40 hover:text-[#7C3AED]'
+                        }`}
+                      >
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>{t.late}</span>
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -1031,7 +1056,7 @@ export const TakeAttendanceScreen: React.FC<TakeAttendanceScreenProps> = ({
             </div>
 
             {/* Breakdown Cards */}
-            <div className="grid grid-cols-3 gap-2 text-center">
+            <div className={`grid gap-2 text-center ${stats.late > 0 ? 'grid-cols-4' : 'grid-cols-3'}`}>
               <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/40">
                 <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 block mb-0.5">
                   {t.present}
@@ -1055,6 +1080,20 @@ export const TakeAttendanceScreen: React.FC<TakeAttendanceScreenProps> = ({
                   {stats.totalStudents > 0 ? Math.round((stats.permission / stats.totalStudents) * 100) : 0}%
                 </span>
               </div>
+
+              {stats.late > 0 && (
+                <div className="p-3 rounded-2xl bg-violet-50 dark:bg-violet-950/40 border border-violet-200 dark:border-violet-900/40">
+                  <span className="text-[11px] font-bold text-violet-700 dark:text-violet-300 block mb-0.5">
+                    {t.late}
+                  </span>
+                  <span className="text-xl font-black text-violet-700 dark:text-violet-400 font-mono">
+                    {stats.late}
+                  </span>
+                  <span className="text-[10px] text-violet-600 dark:text-violet-500 block mt-0.5">
+                    {stats.totalStudents > 0 ? Math.round((stats.late / stats.totalStudents) * 100) : 0}%
+                  </span>
+                </div>
+              )}
 
               <div className="p-3 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/40">
                 <span className="text-[11px] font-bold text-red-700 dark:text-red-300 block mb-0.5">

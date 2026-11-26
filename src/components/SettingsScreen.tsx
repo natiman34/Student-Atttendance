@@ -79,6 +79,26 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const [defaultStatus, setDefaultStatus] = useState<'unmarked' | 'present'>(
     settings.defaultStatus || 'unmarked'
   );
+
+  // School & Class Information
+  const [schoolNameInput, setSchoolNameInput] = useState(settings.schoolName || '');
+  const [classNameInput, setClassNameInput] = useState(settings.className || '');
+  const [teacherNameInput, setTeacherNameInput] = useState(settings.teacherName || '');
+  const [academicYearInput, setAcademicYearInput] = useState(settings.academicYear || '');
+
+  const handleSaveSchoolInfo = (e: React.FormEvent) => {
+    e.preventDefault();
+    onUpdateSettings({
+      ...settings,
+      schoolName: schoolNameInput.trim(),
+      className: classNameInput.trim(),
+      teacherName: teacherNameInput.trim(),
+      academicYear: academicYearInput.trim(),
+    });
+    onShowToast(
+      language === 'am' ? 'የትምህርት ቤት መረጃ በተሳካ ሁኔታ ተቀምጧል' : 'School & class information saved'
+    );
+  };
   const [backupHistoryList, setBackupHistoryList] = useState(() => loadBackupHistory());
 
   // Modals
@@ -417,6 +437,81 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             />
           </button>
         </div>
+      </section>
+
+      {/* School & Class Information */}
+      <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 shadow-xs border border-slate-200/80 dark:border-slate-800 space-y-4">
+        <div className="flex items-center gap-2">
+          <Info className="w-4 h-4 text-[#173B65] dark:text-[#38BDF8]" />
+          <h2 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+            {t.schoolInfoSectionTitle}
+          </h2>
+        </div>
+
+        <form onSubmit={handleSaveSchoolInfo} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">
+                {t.schoolNameLabel}
+              </label>
+              <input
+                type="text"
+                value={schoolNameInput}
+                onChange={(e) => setSchoolNameInput(e.target.value)}
+                placeholder={t.schoolNamePlaceholder}
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">
+                {t.classNameLabel}
+              </label>
+              <input
+                type="text"
+                value={classNameInput}
+                onChange={(e) => setClassNameInput(e.target.value)}
+                placeholder={t.classNamePlaceholder}
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">
+                {t.teacherLabel}
+              </label>
+              <input
+                type="text"
+                value={teacherNameInput}
+                onChange={(e) => setTeacherNameInput(e.target.value)}
+                placeholder="e.g. Mr. Tadesse"
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">
+                {t.academicYearLabel}
+              </label>
+              <input
+                type="text"
+                value={academicYearInput}
+                onChange={(e) => setAcademicYearInput(e.target.value)}
+                placeholder={t.academicYearPlaceholder}
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-1">
+            <button
+              type="submit"
+              className="px-5 py-2.5 rounded-xl bg-[#173B65] hover:bg-[#102a4a] text-white font-black text-xs uppercase tracking-wide transition shadow-xs cursor-pointer"
+            >
+              {language === 'am' ? 'መረጃውን መዝግብ' : 'Save School Info'}
+            </button>
+          </div>
+        </form>
       </section>
 
       {/* Attendance Preferences */}
